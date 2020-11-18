@@ -1,9 +1,13 @@
+package src;
+
 import java.util.ArrayList;
+import static src.EnumHelper.*;
 
 public class Login {
 
     private String myUsername;
     private String myPassword;
+    private UserRole myRole;
     private String securePassword;
     private String salt;
     private Account user;
@@ -48,12 +52,20 @@ public class Login {
         this.user = user;
     }
 
+    public void setMyRole(UserRole userRole){
+        this.myRole = userRole;
+    }
+
+    public UserRole getMyRole(){
+        return myRole;
+    }
+
     //Constructor
-    public Login(String myUsername, String myPassword) {
+    public Login(String myUsername, String myPassword, UserRole myRole) {
         this.myUsername = myUsername;
         this.myPassword = myPassword;
-
-        user = new Account(myUsername,myPassword);
+        this.myRole = myRole;
+        user = new Account(myUsername,myPassword,myRole);
     }
 
     public Boolean validateLogin(){
@@ -93,6 +105,10 @@ public class Login {
             System.out.println("Aw, exception: " + e);
             return false;
         }
+    }
+
+    public User getUserProfile(){
+        return getUser().getUserProfile();
     }
 
     public void SignOut(){

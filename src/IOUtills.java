@@ -1,3 +1,5 @@
+package src;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -81,11 +83,11 @@ public class IOUtills {
             File myObj = new File(filepath);
             Scanner myReader = new Scanner(myObj);
 
-            System.out.println("Reading file......");
+            //System.out.println("Reading file......");
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 output.add(data);
-                System.out.println(data);
+                //System.out.println(data);
             }
 
             setFileInput(output);

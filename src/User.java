@@ -1,3 +1,4 @@
+package src;
 public class User{
 
     enum gender{
@@ -20,9 +21,9 @@ public class User{
     private String email;
     private String username;
     private String password;
-    private int contactNo;
+    private String contactNo;
 
-    public User(String name, String nationality, String email, String username, String password, int contactNo) {
+    public User(String name, String nationality, String email, String username, String password, String contactNo) {
         this.name = name;
         this.nationality = nationality;
         this.email = email;
@@ -71,14 +72,17 @@ public class User{
         this.password = password;
     }
 
-    public int getContactNo() {
+    public String getContactNo() {
         return contactNo;
     }
 
-    public void setContactNo(int contactNo) {
+    public void setContactNo(String contactNo) {
         this.contactNo = contactNo;
     }
 
+    public void AddCourse(CourseInfo courseInfo) { }
 
+    public void RegisteredCourses() { }
 
+    public void DropCourse(CourseInfo courseInfo) { }
 }

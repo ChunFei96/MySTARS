@@ -1,7 +1,4 @@
-
-
-
-
+package src;
 
 public interface UserI {
 

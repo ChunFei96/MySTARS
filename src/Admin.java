@@ -1,4 +1,4 @@
-
+package src;
 
 
 
@@ -6,7 +6,7 @@
 
 public class Admin extends User{
 
-    public Admin(String name, String nationality, String email, String username, String password, int contactNo) {
+    public Admin(String name, String nationality, String email, String username, String password, String contactNo) {
         super(name, nationality, email, username, password, contactNo);
     }
 
