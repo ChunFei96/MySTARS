@@ -1,6 +1,5 @@
-package src;
-
-public interface UserI {
+public interface IUser {
 
     public int CheckCourseVacancy(int indexId);
+
 }

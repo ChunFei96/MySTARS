@@ -1,13 +1,11 @@
-package src;
 
 import java.io.Console;
 import java.util.*;
 
-import static src.EnumHelper.*;
-
 public class MyStars {
 
     private  static Console console;
+    private static ArrayList<CourseInfo> courseInfoList;
 
     public static void main(String[] args) {
 
@@ -18,7 +16,6 @@ public class MyStars {
 
         String username = "chunfei";
         String password = "abc123";
-        UserRole userRole = UserRole.Student;
 
         //Run by Console
         /*
@@ -36,67 +33,26 @@ public class MyStars {
         //console.printf("Password entered was: %s%n", new String(passwordArray));
         */
 
-        Login login = new Login(username,new String(password), userRole);
-        if(login.validateLogin())
-            System.out.println("\nWelcome back! " + login.getMyUsername());
-        User user = login.getUserProfile();
 
         // Init course info db
-        ArrayList<CourseInfo> courseInfoList = new ArrayList<CourseInfo>();
-        String filepath = System.getProperty("user.dir") + "/CourseInfo/" + "/CourseInfo.txt";
-        IOUtills.ReadFile(filepath);
+        InitCourseDB();
 
-        ArrayList<String> courseInfoDB =  IOUtills.getFileInput();
+        Login login = new Login(username,new String(password));
+        if(login.validateLogin()) {
+            System.out.println("\nWelcome back! " + login.getMyUsername());
 
-        if(courseInfoDB != null && courseInfoDB.size() > 0 )
-        {
-            for (int i = 0; i < courseInfoDB.size(); i++) { 		      
-                CourseInfo course = new CourseInfo(courseInfoDB.get(i));
-                //courses.GetCourseInfo();
-                courseInfoList.add(course); 		
+            if(login.getUser().getUserRole() == EnumHelper.UserRole.STUDENT){
+                Student student = login.getStudentProfile();
+                StudentSelection(student);
+            }
+            else if(login.getUser().getUserRole() == EnumHelper.UserRole.ADMIN){
+                Admin admin = login.getAdminProfile();
+                AdminMenu();
             }
         }
-
-        
-
-        // user course selection
-        int choice = 0;
-        do
-        {
-            UserMenu();
-            Scanner sc = new Scanner(System.in);
-            choice = sc.nextInt();
-
-            switch(choice)
-            {
-                case 1:
-                    CourseMenu(courseInfoList);
-                    choice = sc.nextInt();
-                    user.AddCourse(courseInfoList.get(choice-1));
-                    break;
-                case 2:
-                    CourseMenu(courseInfoList);
-                    choice = sc.nextInt();
-                    user.DropCourse(courseInfoList.get(choice-1));
-                    break;
-                case 3:
-                    user.RegisteredCourses();
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                default:
-                    System.out.println("See you again!");
-                    break;
-            }
-        }
-        while(choice < 8);
     }
 
-    private static void UserMenu()
+    private static void StudentMenu()
     {
         System.out.println("Please select option below: ");
 			
@@ -109,6 +65,20 @@ public class MyStars {
             System.out.println("7: Log out");
     }
 
+    private static void AdminMenu(){
+        System.out.println("====== Welcome Admin ======");
+        System.out.println("1. Add Student");
+        System.out.println("2. Edit Student");
+        System.out.println("3. Add Course");
+        System.out.println("4. Update Course");
+        System.out.println("5. Edit Student Access");
+        System.out.println("6. Print StudentList By Index Number");
+        System.out.println("7. Print StudentList By Course");
+        System.out.println("8. Retrieve Class Vacancy");
+        System.out.println("9. Logout");
+        System.out.println("=====================");
+    }
+
     private static void CourseMenu(ArrayList<CourseInfo> courseInfoList)
     {
         System.out.println("\n=========================================== Course information menu ================================================\n");
@@ -119,5 +89,86 @@ public class MyStars {
             }
             System.out.println("Please select a course to register: ");
         }
+    }
+
+    private static void StudentCourseMenu(ArrayList<CourseInfo> courseInfoList)
+    {
+        System.out.println("\n=========================================== Student registered courses ================================================\n");
+        if(courseInfoList != null && courseInfoList.size() > 0)
+        {
+            for (int i = 0; i < courseInfoList.size(); i++) {
+                System.out.println( i+1 + ": " + courseInfoList.get(i).GetCourseInfo());
+            }
+            System.out.println("Please select a course to drop: ");
+        }
+    }
+
+    private static void InitCourseDB()
+    {
+        courseInfoList = new ArrayList<CourseInfo>();
+        String filepath = System.getProperty("user.dir") + "/CourseInfo/" + "/CourseInfo.txt";
+        IOUtills.ReadFile(filepath);
+
+        ArrayList<String> courseInfoDB =  IOUtills.getFileInput();
+
+        if(courseInfoDB != null && courseInfoDB.size() > 0 )
+        {
+            for (int i = 0; i < courseInfoDB.size(); i++) {
+                CourseInfo course = new CourseInfo(courseInfoDB.get(i));
+                //courses.GetCourseInfo();
+                courseInfoList.add(course);
+            }
+        }
+    }
+
+    private static int ChoiceValidation(int size)
+    {
+        Scanner sc = new Scanner(System.in);
+        int choice = sc.nextInt();
+        while(choice > size)
+        {
+            System.out.println("Invalid input! Please select again.");
+            choice = sc.nextInt();
+        }
+        return choice;
+    }
+
+    private static void StudentSelection(Student student)
+    {
+        // student selection
+        int choice = 0;
+        do{
+            StudentMenu();
+            Scanner sc = new Scanner(System.in);
+            choice = sc.nextInt();
+
+            switch(choice)
+            {
+                case 1:
+                    CourseMenu(courseInfoList);
+                    int addSelection = ChoiceValidation(courseInfoList.size());
+                    student.AddCourse(courseInfoList.get(addSelection-1));
+                    break;
+                case 2:
+
+                    StudentCourseMenu(student.getCourseInfoList());
+                    int dropSelection = ChoiceValidation(student.getCourseInfoList().size());
+                    student.DropCourse(student.getCourseInfoList().get(dropSelection-1));
+                    break;
+                case 3:
+                    student.RegisteredCourses();
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                default:
+                    System.out.println("See you again!");
+                    System.exit(0);
+                    break;
+            }
+        }while (choice < 8);
     }
 }

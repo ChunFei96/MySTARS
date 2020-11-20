@@ -1,13 +1,10 @@
-package src;
 
-import java.util.ArrayList;
-import static src.EnumHelper.*;
 
 public class Login {
 
     private String myUsername;
     private String myPassword;
-    private UserRole myRole;
+    private EnumHelper.UserRole myRole;
     private String securePassword;
     private String salt;
     private Account user;
@@ -52,20 +49,19 @@ public class Login {
         this.user = user;
     }
 
-    public void setMyRole(UserRole userRole){
+    public void setMyRole(EnumHelper.UserRole userRole){
         this.myRole = userRole;
     }
 
-    public UserRole getMyRole(){
+    public EnumHelper.UserRole getMyRole(){
         return myRole;
     }
 
     //Constructor
-    public Login(String myUsername, String myPassword, UserRole myRole) {
+    public Login(String myUsername, String myPassword) {
         this.myUsername = myUsername;
         this.myPassword = myPassword;
-        this.myRole = myRole;
-        user = new Account(myUsername,myPassword,myRole);
+        user = new Account(myUsername,myPassword);
     }
 
     public Boolean validateLogin(){
@@ -95,6 +91,7 @@ public class Login {
             if(passwordMatch)
             {
                 System.out.println("Provided user password <<" + providedPassword + ">> is correct.");
+                user.setUserRole(currentUser.getMyRole());
                 return true;
             } else {
                 System.out.println("Provided password is incorrect");
@@ -107,8 +104,12 @@ public class Login {
         }
     }
 
-    public User getUserProfile(){
-        return getUser().getUserProfile();
+    public Student getStudentProfile(){
+        return getUser().getStudentProfile();
+    }
+
+    public Admin getAdminProfile(){
+        return getUser().getAdminProfile();
     }
 
     public void SignOut(){

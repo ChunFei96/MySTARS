@@ -1,6 +1,9 @@
-package src;
 
-public class EnumHelper {
+public abstract class EnumHelper {
     
-    public static enum UserRole { Student, Admin}
+    public static enum UserRole { STUDENT, ADMIN}
+
+    public static enum Gender{ MALE, FEMALE}
+
+    public static enum Status{ ACTIVE, DEACTIVED }
 }

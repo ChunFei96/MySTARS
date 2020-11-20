@@ -1,44 +1,40 @@
-package src;
+
 import java.util.*;
 
-public class Student extends User{
+public class Student extends User implements IStudent{
 
     private String matricNo;
     private ArrayList<CourseInfo> courseInfoList;
+    private CourseManager courseManager;
 
     
-    public Student(String name, String nationality, String email, String username, String password, String contactNo, String matricNo)
+    public Student(String name, String nationality, String email, String username, String password, String contactNo,
+                   EnumHelper.UserRole role, EnumHelper.Gender sex, String matricNo)
     {
-        super(name,nationality,email,username,password,contactNo);
+        super(name,nationality,email,username,password,contactNo,EnumHelper.UserRole.STUDENT,sex);
         this.matricNo = matricNo;
         courseInfoList = new ArrayList<CourseInfo>();
+        courseManager = new CourseManager();
+    }
+
+    public ArrayList<CourseInfo> getCourseInfoList()
+    {
+        return this.courseInfoList;
     }
 
     public void AddCourse(CourseInfo courseInfo)
     {
-        if(!IsCourseDuplicate(courseInfo))
-            this.courseInfoList.add(courseInfo);
-
+        courseManager.AddCourse(this, courseInfo);
     }
 
     public void DropCourse(CourseInfo courseInfo)
     {
-        if(IsCourseExist(courseInfo))
-            this.courseInfoList.remove(courseInfo);
-
+        courseManager.DropCourse(this, courseInfo);
     }
 
     public void RegisteredCourses()
     {
-        if(courseInfoList != null && courseInfoList.size() > 0)
-        {
-            for(int i=0; i < courseInfoList.size() ; i++)
-            {
-                System.out.println(i+1 + ": " + courseInfoList.get(i).GetCourseInfo());
-            }
-        }
-        else
-            System.out.println("There is no registerd course(s) for " + super.getName() + "!");
+        courseManager.RegisteredCourses(this);
     }
 
     public void ChangeCourseIndexNumber(int course_Code)
@@ -46,39 +42,15 @@ public class Student extends User{
 
     }
 
-
-
     public void SwapIndexNumber(int index_ID, int student_ID)
     {
         
     }
 
-    private Boolean IsCourseDuplicate(CourseInfo courseInfo)
+    public int CheckCourseVacancy(int indexId)
     {
-        if(courseInfoList != null && courseInfoList.size() > 0)
-        {
-            for(int i=0; i < courseInfoList.size() ; i++)
-            {
-                if(courseInfoList.get(i).getIndexNo() == courseInfo.getIndexNo()){
-                    System.out.println( super.getName() + " already registered " + courseInfo.getIndexNo() );
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+        return 0;
+    } 
 
-    private Boolean IsCourseExist(CourseInfo courseInfo)
-    {
-        if(courseInfoList != null && courseInfoList.size() > 0)
-        {
-            for(int i=0; i < courseInfoList.size() ; i++)
-            {
-                if(courseInfoList.get(i).getIndexNo() == courseInfo.getIndexNo()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    
 }

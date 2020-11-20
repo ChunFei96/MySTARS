@@ -1,20 +1,5 @@
-package src;
+
 public class User{
-
-    enum gender{
-        MALE,
-        FEMALE
-    }
-
-    enum role{
-        STUDENT,
-        ADMIN
-    }
-
-    enum status{
-        ACTIVE,
-        DEACTIVED
-    }
 
     private String name;
     private String nationality;
@@ -22,14 +7,18 @@ public class User{
     private String username;
     private String password;
     private String contactNo;
+    private EnumHelper.UserRole role;
+    private EnumHelper.Gender sex;
 
-    public User(String name, String nationality, String email, String username, String password, String contactNo) {
+    public User(String name, String nationality, String email, String username, String password, String contactNo, EnumHelper.UserRole role, EnumHelper.Gender sex) {
         this.name = name;
         this.nationality = nationality;
         this.email = email;
         this.username = username;
         this.password = password;
         this.contactNo = contactNo;
+        this.role = role;
+        this.sex = sex;
     }
 
     public String getName() {
@@ -80,9 +69,13 @@ public class User{
         this.contactNo = contactNo;
     }
 
-    public void AddCourse(CourseInfo courseInfo) { }
+    public EnumHelper.UserRole getUserRole() {
+        return role;
+    }
 
-    public void RegisteredCourses() { }
+    public EnumHelper.Gender getGender(){
+        return sex;
+    }
 
-    public void DropCourse(CourseInfo courseInfo) { }
+    public void setGender(EnumHelper.Gender sex) { this.sex = sex;}
 }

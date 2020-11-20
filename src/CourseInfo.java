@@ -1,6 +1,4 @@
-package src;
 
-import java.util.*;
 
 public class CourseInfo
 {
@@ -46,4 +44,6 @@ public class CourseInfo
     {
         return indexNo;
     }
+
+    public String getName() {return name;}
 }
