@@ -68,12 +68,12 @@ public class CourseManager {
     //endregion
 
     //region Admin
-    public void EditStudentAccessPeriod(Student student)
+    public void EditStudentAccessPeriod(Student student, String accessPeriod)
     {
 
     }
 
-    public void AddStudent(Student student)
+    public void AddStudent()
     {
 
     }

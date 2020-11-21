@@ -51,8 +51,8 @@ public class Account {
     public Account(String username, String password) {
         this.password = password;
         this.username = username;
-        System.out.println("username: <<" +  username + ">>");
-        System.out.println("password: <<" +  password + ">>");
+//        System.out.println("Account username: <<" +  username + ">>");
+//        System.out.println("Account password: <<" +  password + ">>");
     }
 
     //Create new User account
@@ -72,8 +72,18 @@ public class Account {
         //Content format: <username>,<password>,<salt>,<securePassword>,<role>
         String content = getUsername() + "," + getPassword() + "," + salt + "," + mySecurePassword + "," + getUserRole() ;
 
-        IOUtills userCredentials = new IOUtills(getUsername(),"txt",content,"UserTable");
-        IOUtills.createDirectory("UserTable");
+        //new IOUtills(getUsername(),"txt",content,"UserTable");
+
+        String path = System.getProperty("user.dir") + "/UserTable";
+        if(Files.notExists(Path.of(path))){
+            IOUtills.createDirectory("UserTable");
+        }
+
+        IOUtills.ReadFile(path + "/chunfei.txt");
+        ArrayList<String> data = IOUtills.getFileInput();
+        content = String.join("\r\n",data) + "\r\n" + content;
+
+        new IOUtills("chunfei","txt",content,"UserTable");
         IOUtills.WriteFile();
 
     }
@@ -120,9 +130,9 @@ public class Account {
         String[] userData = output.get(0).split(",");
 
         if(userData != null){
-
-            Student student = new Student(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5],
-                    EnumHelper.UserRole.valueOf(userData[6]), EnumHelper.Gender.valueOf(userData[7]), userData[8]);
+            Student student = new Student(userData[0], userData[1], userData[2], userData[3],
+                    userData[4], userData[5], EnumHelper.UserRole.valueOf(userData[6]),
+                    EnumHelper.Gender.valueOf(userData[7]), userData[8],userData[9]);
             return student;
         }
         return null;
@@ -133,7 +143,7 @@ public class Account {
 
         //Check against UserTable to find user data
         if(Files.notExists(Path.of(inputFile))){
-            //System.out.println("Please try login again!");
+            //IOUtills.createDirectory("AdminProfile");
             return null;
         }
 

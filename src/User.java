@@ -78,4 +78,15 @@ public class User{
     }
 
     public void setGender(EnumHelper.Gender sex) { this.sex = sex;}
+
+
+    public String ToStr(){
+        String[] raw = new String[]{name,nationality,email,username,
+                password,contactNo, String.valueOf(role), String.valueOf(sex)};
+
+        var cc = String.join(",",raw);
+
+        return cc;
+    }
+
 }

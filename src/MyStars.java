@@ -48,21 +48,31 @@ public class MyStars {
             else if(login.getUser().getUserRole() == EnumHelper.UserRole.ADMIN){
                 Admin admin = login.getAdminProfile();
                 AdminMenu();
+
+//                Login login2 = new Login("tst","tst");
+//                login2.validateLogin();
+//                Student student = login2.getStudentProfile();
+
+                //admin.EditStudentAccessPeriod();
+                //admin.AddStudent();  //Task  2
+
+                admin.PrintStudentListByIndex("00318");
             }
         }
+
     }
 
     private static void StudentMenu()
     {
         System.out.println("Please select option below: ");
 			
-			System.out.println("1: Add Course");
-			System.out.println("2: Drop Course");
-			System.out.println("3: Check/Print Courses Registered");
-			System.out.println("4: Check Vacancies Available");
-            System.out.println("5: Change Index Number of Course");
-            System.out.println("6: Swop Index Number with Another Student");
-            System.out.println("7: Log out");
+        System.out.println("1: Add Course");
+        System.out.println("2: Drop Course");
+        System.out.println("3: Check/Print Courses Registered");
+        System.out.println("4: Check Vacancies Available");
+        System.out.println("5: Change Index Number of Course");
+        System.out.println("6: Swop Index Number with Another Student");
+        System.out.println("7: Log out");
     }
 
     private static void AdminMenu(){
