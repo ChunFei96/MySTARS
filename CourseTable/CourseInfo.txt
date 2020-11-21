@@ -1,0 +1,4 @@
+CZ2004,HCI,Core
+CZ2002,Object Oriented Design & Programming,Core
+CZ2001,Algorithm,Core
+CZ2003,CGV,Core

@@ -1,12 +1,13 @@
+import java.util.ArrayList;
 
 public interface IStudent extends IUser {
-    void AddCourse(CourseInfo courseInfo);
+    ArrayList<StudentCourse> AddCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList);
 
-    void DropCourse(CourseInfo courseInfo);
+    ArrayList<StudentCourse> DropCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList);
 
     void RegisteredCourses();
 
-    void ChangeCourseIndexNumber(int course_Code);
+    void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass);
 
-    void SwapIndexNumber(int index_ID, int student_ID);
+    void SwapIndexNumber(int index_ID, int studentAccount);
 }

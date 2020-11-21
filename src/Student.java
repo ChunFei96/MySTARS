@@ -1,5 +1,5 @@
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Student extends User implements IStudent{
 
@@ -17,19 +17,15 @@ public class Student extends User implements IStudent{
         courseManager = new CourseManager();
     }
 
-    public ArrayList<CourseInfo> getCourseInfoList()
+
+    public ArrayList<StudentCourse> AddCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
     {
-        return this.courseInfoList;
+        return courseManager.AddCourse(this, courseInfo, studentCourseList);
     }
 
-    public void AddCourse(CourseInfo courseInfo)
+    public ArrayList<StudentCourse> DropCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
     {
-        courseManager.AddCourse(this, courseInfo);
-    }
-
-    public void DropCourse(CourseInfo courseInfo)
-    {
-        courseManager.DropCourse(this, courseInfo);
+        return courseManager.DropCourse(this, courseInfo, studentCourseList);
     }
 
     public void RegisteredCourses()
@@ -37,9 +33,14 @@ public class Student extends User implements IStudent{
         courseManager.RegisteredCourses(this);
     }
 
-    public void ChangeCourseIndexNumber(int course_Code)
-    {
+//    public CourseInfo ShowCourses(int indexNo)
+//    {
+//        return courseManager.RegisteredCourses(this, indexNo);
+//    }
 
+    public void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass)
+    {
+        courseManager.ChangeCourseIndexNumber(this,oldClass,newClass);
     }
 
     public void SwapIndexNumber(int index_ID, int student_ID)
@@ -52,5 +53,24 @@ public class Student extends User implements IStudent{
         return 0;
     } 
 
-    
+    public String getMatricNo()
+    {
+        return matricNo;
+    }
+
+    public ArrayList<CourseInfo> getCourseInfoList()
+    {
+        return this.courseInfoList;
+    }
+
+    public void addCourse(CourseInfo courseInfo)
+    {
+        this.courseInfoList.add(courseInfo);
+    }
+
+    public void dropCourse(CourseInfo courseInfo)
+    {
+        this.courseInfoList.remove(courseInfo);
+    }
+
 }

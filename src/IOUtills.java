@@ -1,8 +1,5 @@
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -79,8 +76,6 @@ public class IOUtills {
 
             File myObj = new File(filepath);
             Scanner myReader = new Scanner(myObj);
-
-            //System.out.println("Reading file......");
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 output.add(data);
@@ -114,6 +109,30 @@ public class IOUtills {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+    }
+
+    public static void WriteFile(Boolean append){
+        try {
+
+            String _filepath = getFilename()  + "." + getFiletype();
+
+            if(!getDirectoryName().isEmpty()){
+                _filepath = getDirectoryName() + File.separator + _filepath ;
+            }
+
+            //File.separator => back or forward slash
+            FileWriter myWriter = new FileWriter(_filepath,append);
+            myWriter.write(getContent() + "\n");
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void UpdateFile(){
+
     }
 }
 

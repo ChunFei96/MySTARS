@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class CourseManager {
 
     private MailHelper mailHelper;
@@ -14,33 +16,78 @@ public class CourseManager {
     } 
     
     //region Student 
-    public void AddCourse(Student student, CourseInfo courseInfo)
+    public ArrayList<StudentCourse> AddCourse(Student student, CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
     {
-        if(!IsCourseDuplicate(student, courseInfo)){
-            student.getCourseInfoList().add(courseInfo);
+        student.addCourse(courseInfo);
 
-            String content = student.getName() + "," + courseInfo.getIndexNo();
+        // add course in student course DB
+        StudentCourse studentCourse = new StudentCourse();
+        studentCourse.setStudentMatricNo(student.getMatricNo());
+        studentCourse.setCourseCode(courseInfo.getCode());
+        studentCourse.setCourseIndex(courseInfo.getClassList().get(0).getIndexNo());
 
-            IOUtills userCredentials = new IOUtills(student.getUsername(),"txt",content,"StudentCourseTable");
-            IOUtills.WriteFile();
+        studentCourseList.add(studentCourse);
+
+        // write back to Student Course txt file
+        String content = student.getMatricNo() + "," + courseInfo.getCode() + "," + courseInfo.getClassList().get(0).getIndexNo() ;
+
+        IOUtills saveCourse = new IOUtills("StudentCourse","txt",content,"StudentCourseTable");
+        IOUtills.WriteFile(true);
+
+        // decrease the course class's vacancy by 1
 
 
 
-            mailHelper.setRecipientEmail(student.getEmail());
-            mailHelper.setMessage("Congratulation! you have registered " + courseInfo.getName() + " !");
-            mailHelper.setEmailSubject("Successfully registered " + courseInfo.getName() + " !");
-            //mailHelper.SendEmail();
-        }
 
+
+        mailHelper.setRecipientEmail(student.getEmail());
+        mailHelper.setMessage("Congratulation! you have registered " + courseInfo.getName() + " !");
+        mailHelper.setEmailSubject("Successfully registered " + courseInfo.getName() + " !");
+        //mailHelper.SendEmail();
+
+        return studentCourseList;
     }
 
-    public void DropCourse(Student student, CourseInfo courseInfo)
+    public ArrayList<StudentCourse> DropCourse(Student student, CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
     {
-            student.getCourseInfoList().remove(courseInfo);
-            mailHelper.setRecipientEmail(student.getEmail());
-            mailHelper.setMessage("We are to inform you that you have dropped " + courseInfo.getName() + ". Please contact your school coordinator if you have not done so.");
-            mailHelper.setEmailSubject("Successfully dropped " + courseInfo.getName() + " !");
-            //mailHelper.SendEmail();
+         // remove course in student courseArrayList
+         student.dropCourse(courseInfo);
+
+         // remove course in student course DB
+         StudentCourse studentCourse = new StudentCourse();
+         studentCourse.setStudentMatricNo(student.getMatricNo());
+         studentCourse.setCourseCode(courseInfo.getCode());
+         studentCourse.setCourseIndex(courseInfo.getClassList().get(0).getIndexNo());
+
+         studentCourseList.remove(studentCourse);
+
+        // write back to Student Course txt file
+        if(studentCourseList != null && studentCourseList.size() > 0)
+        {
+            String content = "";
+            for(int i =0; i < studentCourseList.size(); i++)
+            {
+                content = studentCourseList.get(i).getStudentMatricNo() + "," + studentCourseList.get(i).getCourseCode() + "," + studentCourseList.get(i).getCourseIndex() + "\n" ;
+            }
+            IOUtills saveCourse = new IOUtills("StudentCourse","txt",content,"StudentCourseTable");
+            IOUtills.WriteFile();
+        }
+        else
+        {
+            // the db is empty
+            IOUtills saveCourse = new IOUtills("StudentCourse","txt","","StudentCourseTable");
+            IOUtills.WriteFile();
+        }
+
+        // increase the course class's vacancy by 1
+
+
+         mailHelper.setRecipientEmail(student.getEmail());
+         mailHelper.setMessage("We are to inform you that you have dropped " + courseInfo.getName() + ". Please contact your school coordinator if you have not done so.");
+         mailHelper.setEmailSubject("Successfully dropped " + courseInfo.getName() + " !");
+         //mailHelper.SendEmail();
+
+        return studentCourseList;
     }
 
     public void RegisteredCourses(Student student)
@@ -49,15 +96,36 @@ public class CourseManager {
         {
             for(int i=0; i < student.getCourseInfoList().size() ; i++)
             {
-                System.out.println(i+1 + ": " + student.getCourseInfoList().get(i).GetCourseInfo());
+                System.out.println(i+1 + ": " + student.getCourseInfoList().get(i).getCourseInfo());
             }
         }
         else
             System.out.println("There is no registered course(s) for " + student.getName() + "!");
     }
 
-    public void ChangeCourseIndexNumber(int course_Code)
+//    public CourseInfo RegisteredCourses(Student student, int indexNo)
+//    {
+//        for(int i=0; i < student.getCourseInfoList().size() ; i++)
+//        {
+//            if(student.getCourseInfoList().get(i).getIndexNo().toUpperCase() == String.valueOf(indexNo).toUpperCase())
+//            {
+//                System.out.println(i+1 + ": " + student.getCourseInfoList().get(i).getCourseInfo());
+//                return student.getCourseInfoList().get(i);
+//            }
+//        }
+//        System.out.println("There is no course exists for this " + indexNo + " index number!");
+//        return null;
+//    }
+
+    public void ChangeCourseIndexNumber(Student student, CourseInfo oldClass, CourseInfo newClass)
     {
+        if(student.getCourseInfoList().contains(oldClass))
+        {
+            student.getCourseInfoList().add(newClass);
+            student.getCourseInfoList().add(oldClass);
+        }
+        else
+            System.out.println("This is not registered course(s) for " + student.getName() + "!");
 
     }
 
@@ -96,19 +164,19 @@ public class CourseManager {
     //endregion
     
     //region Private 
-    private Boolean IsCourseDuplicate(Student student, CourseInfo courseInfo)
-    {
-        if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
-        {
-            for(int i=0; i < student.getCourseInfoList().size() ; i++)
-            {
-                if(student.getCourseInfoList().get(i).getIndexNo() == courseInfo.getIndexNo()){
-                    System.out.println( student.getName() + " already registered " + courseInfo.getIndexNo() );
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+//    private Boolean IsCourseDuplicate(Student student, CourseInfo courseInfo)
+//    {
+//        if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
+//        {
+//            for(int i=0; i < student.getCourseInfoList().size() ; i++)
+//            {
+//                if(student.getCourseInfoList().get(i).getIndexNo() == courseInfo.getIndexNo()){
+//                    System.out.println( student.getName() + " already registered " + courseInfo.getIndexNo() );
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
     //endregion
 }

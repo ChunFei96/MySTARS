@@ -48,9 +48,10 @@ public class Account {
     }
 
     //Constructor
-    public Account(String username, String password) {
+    public Account(String username, String password, EnumHelper.UserRole role) {
         this.password = password;
         this.username = username;
+        this.userRole = role;
         System.out.println("username: <<" +  username + ">>");
         System.out.println("password: <<" +  password + ">>");
     }
@@ -75,7 +76,6 @@ public class Account {
         IOUtills userCredentials = new IOUtills(getUsername(),"txt",content,"UserTable");
         IOUtills.createDirectory("UserTable");
         IOUtills.WriteFile();
-
     }
 
     public Login getAccountInfo(){

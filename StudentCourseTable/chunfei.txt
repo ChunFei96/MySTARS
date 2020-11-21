@@ -1,1 +1,4 @@
-Lee Chun Fei,00317
+Lee Chun Fei,00317,Object Oriented Design & Programming
+Lee Chun Fei,00533,CGV
+Lee Chun Fei,00192,Algorithm
+Lee Chun Fei,00425,HCI

@@ -1,4 +1,0 @@
-00425,CZ2004,HCI,Core,5,Wed,0900-1030,LT4,Lecture, 350,0
-00317,CZ2002,Object Oriented Design & Programming,Core,5,Fri,1600-1800,SWLab3,Lecture & tutorial,370,0
-00192,CZ2001,Algorithm,Core,5,Tues,1200-1330,HWLab1,Lab, 600,0
-00533,CZ2003,CGV,Core,5,Mon,1000-1200,LT17,Lecture, 420,0

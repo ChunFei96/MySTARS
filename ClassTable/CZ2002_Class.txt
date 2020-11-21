@@ -1,0 +1,3 @@
+00317,CZ2002,5,Fri,1600-1800,SWLab3,Lecture & tutorial,370,0
+00318,CZ2002,5,Fri,1600-1800,SWLab3,Lecture & tutorial,370,0
+00319,CZ2002,5,Fri,1600-1800,SWLab3,Lecture & tutorial,370,0
