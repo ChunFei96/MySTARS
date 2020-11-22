@@ -79,38 +79,42 @@ public class Account {
             IOUtills.createDirectory("UserTable");
         }
 
-        IOUtills.ReadFile(path + "/chunfei.txt");
+        IOUtills.ReadFile(path + "/user.txt");
         ArrayList<String> data = IOUtills.getFileInput();
         content = String.join("\r\n",data) + "\r\n" + content;
 
         new IOUtills("chunfei","txt",content,"UserTable");
         IOUtills.WriteFile();
-
     }
 
-    public Login getAccountInfo(){
+    public Login getAccountInfo(String username){
 
-        String inputFile = System.getProperty("user.dir") + "/UserTable/" + getUsername() +  ".txt";
+        String inputFile = System.getProperty("user.dir") + "/UserTable/user.txt";
 
         //Check against UserTable to find user data
         if(Files.notExists(Path.of(inputFile))){
-            //System.out.println("Please try login again!");
             return null;
         }
 
-        IOUtills.ReadFile(inputFile);
-        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
+//        IOUtills.ReadFile(inputFile);
+//        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
+//        String[] userData = output.get(0).split(",");
+//        if(userData != null){
+//
+//            Login currentUser = new Login(userData[0],userData[1]);
+//            currentUser.setSalt(userData[2]);
+//            currentUser.setSecurePassword(userData[3]);
+//            currentUser.setMyRole(EnumHelper.UserRole.valueOf(userData[4]));
+//
+//            return currentUser;
+//        }
 
-        String[] userData = output.get(0).split(",");
+        var singleton_userTable = Singleton_UserTable.getInstance().userDB;
 
-        if(userData != null){
-
-            Login currentUser = new Login(userData[0],userData[1]);
-            currentUser.setSalt(userData[2]);
-            currentUser.setSecurePassword(userData[3]);
-            currentUser.setMyRole(EnumHelper.UserRole.valueOf(userData[4]));
-
-            return currentUser;
+        for(Login userLogin : singleton_userTable){
+            if(userLogin.getMyUsername().equals(username)){
+                return userLogin;
+            }
         }
         return null;
     }
@@ -132,32 +136,38 @@ public class Account {
         if(userData != null){
             Student student = new Student(userData[0], userData[1], userData[2], userData[3],
                     userData[4], userData[5], EnumHelper.UserRole.valueOf(userData[6]),
-                    EnumHelper.Gender.valueOf(userData[7]), userData[8],userData[9]);
+                    EnumHelper.Gender.valueOf(userData[7]), userData[8],userData[9],userData[10]);
             return student;
         }
         return null;
     }
 
     public Admin getAdminProfile(){
-        String inputFile = System.getProperty("user.dir") + "/AdminProfile/" + getUsername() +  ".txt";
 
-        //Check against UserTable to find user data
-        if(Files.notExists(Path.of(inputFile))){
-            //IOUtills.createDirectory("AdminProfile");
-            return null;
+
+        boolean del = true;
+        if(del){
+            String inputFile = System.getProperty("user.dir") + "/AdminProfile/chunfei.txt";
+
+            //Check against UserTable to find user data
+            if(Files.notExists(Path.of(inputFile))){
+                //IOUtills.createDirectory("AdminProfile");
+                return null;
+            }
+
+            IOUtills.ReadFile(inputFile);
+            ArrayList<String> output = IOUtills.getFileInput(); //get the file data
+
+            String[] userData = output.get(0).split(",");
+
+            if(userData != null){
+
+                Admin admin = new Admin(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5],
+                        EnumHelper.UserRole.valueOf(userData[6]), EnumHelper.Gender.valueOf(userData[7]));
+                return admin;
+            }
         }
 
-        IOUtills.ReadFile(inputFile);
-        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
-
-        String[] userData = output.get(0).split(",");
-
-        if(userData != null){
-
-            Admin admin = new Admin(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5],
-                    EnumHelper.UserRole.valueOf(userData[6]), EnumHelper.Gender.valueOf(userData[7]));
-            return admin;
-        }
         return null;
     }
 }

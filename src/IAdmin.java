@@ -1,5 +1,5 @@
 public interface IAdmin extends IUser{
-    public void EditStudentAccessPeriod(Student student, String accessPeriod);
+    public void EditStudentAccessPeriod();
 
     public void AddStudent();
 
@@ -7,5 +7,5 @@ public interface IAdmin extends IUser{
 
     public void PrintStudentListByIndex(String indexNo);
 
-    public void PrintStudentListByCourse(CourseInfo courseInfo);
+    public void PrintStudentListByCourse(String courseName);
 }

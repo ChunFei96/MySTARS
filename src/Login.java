@@ -1,4 +1,8 @@
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class Login {
 
@@ -64,9 +68,17 @@ public class Login {
         user = new Account(myUsername,myPassword);
     }
 
-    public Boolean validateLogin(){
+    public Login(String myUsername, String myPassword,String salt,String securePassword,EnumHelper.UserRole role) {
+        this.myUsername = myUsername;
+        this.myPassword = myPassword;
+        this.salt = salt;
+        this.securePassword = securePassword;
+        this.setMyRole(role);
+        user = new Account(myUsername,myPassword);  // <---
+    }
 
-        //TODO: change providedPassword, securePassword to pull from UserTable
+
+    public Boolean validateLogin(){
 
         // User provided password to validate
         String providedPassword = getMyPassword();
@@ -77,24 +89,38 @@ public class Login {
 
         try{
 
-            Login currentUser = getUser().getAccountInfo();
+            //Login currentUser = getUser().getAccountInfo();  //Ori
+            Login currentUser = getUser().getAccountInfo(getMyUsername());
 
             if(currentUser == null){
                 System.out.println("Login failed, try again.");
                 return false;
             }
 
-            setSalt(currentUser.salt);
-            setSecurePassword(currentUser.securePassword);
+//            setSalt(currentUser.salt);
+//            setSecurePassword(currentUser.securePassword);
 
-            boolean passwordMatch = PasswordUtils.verifyUserPassword(providedPassword,getSecurePassword(),getSalt());
+            boolean passwordMatch = PasswordUtils.verifyUserPassword(providedPassword,
+                    currentUser.getSecurePassword(),currentUser.getSalt());
+
+            //<editor-fold desc="<Validate Student Access Period>">
+            if(currentUser.getMyRole().equals(EnumHelper.UserRole.STUDENT)){
+                for(Student stu : Singleton_StudentProfile.getInstance().studentProfileDB){
+                    if(stu.getUsername().equals(getMyUsername())){
+                        if(!checkAccessPeriod(stu.getAccessPeriodEnd())){
+                            return false;
+                        }
+                        break;
+                    }
+                }
+            }
+            //</editor-fold>
+
             if(passwordMatch)
             {
-                System.out.println("Provided user password <<" + providedPassword + ">> is correct.");
                 user.setUserRole(currentUser.getMyRole());
                 return true;
             } else {
-                System.out.println("Provided password is incorrect");
                 return false;
             }
         }
@@ -110,6 +136,20 @@ public class Login {
 
     public Admin getAdminProfile(){
         return getUser().getAdminProfile();
+    }
+
+    public static boolean checkAccessPeriod(String accessPeriod) throws ParseException {
+
+        LocalDateTime getTodayDate = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        Date _userAccessPeriod = new SimpleDateFormat("dd/MM/yyyy").parse(accessPeriod);
+        Date _now = new Date();
+
+        if(_userAccessPeriod.after(_now)){
+            return true;
+        }
+        return false;
     }
 
     public void SignOut(){

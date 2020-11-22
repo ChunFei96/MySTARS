@@ -1,33 +1,41 @@
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Student extends User implements IStudent{
 
     private String matricNo;
-    private String accessPeriod;
+    private String accessPeriodStart;
+    private String accessPeriodEnd;
     private ArrayList<CourseInfo> courseInfoList;
     private CourseManager courseManager;
 
-//    public Student() {
-//        super();
-//    }
+
 
     public Student(String name, String nationality, String email, String username, String password, String contactNo,
-                   EnumHelper.UserRole role, EnumHelper.Gender sex, String matricNo, String accessPeriod)
+                   EnumHelper.UserRole role, EnumHelper.Gender sex, String matricNo, String accessPeriodStart,String accessPeriodEnd)
     {
         super(name,nationality,email,username,password,contactNo,EnumHelper.UserRole.STUDENT,sex);
         this.matricNo = matricNo;
-        this.setAccessPeriod(accessPeriod);
+        this.setAccessPeriodStart(accessPeriodStart);
+        this.setAccessPeriodEnd(accessPeriodEnd);
         courseInfoList = new ArrayList<CourseInfo>();
         courseManager = new CourseManager();
     }
 
-    public String getAccessPeriod() {
-        return accessPeriod;
+    public String getAccessPeriodStart() {
+        return accessPeriodStart;
     }
 
-    public void setAccessPeriod(String accessPeriod) {
-        this.accessPeriod = accessPeriod;
+    public void setAccessPeriodStart(String accessPeriodStart) {
+        this.accessPeriodStart = accessPeriodStart;
+    }
+
+    public String getAccessPeriodEnd() {
+        return accessPeriodEnd;
+    }
+
+    public void setAccessPeriodEnd(String accessPeriodEnd) {
+        this.accessPeriodEnd = accessPeriodEnd;
     }
 
     public ArrayList<CourseInfo> getCourseInfoList()
@@ -50,9 +58,14 @@ public class Student extends User implements IStudent{
         courseManager.RegisteredCourses(this);
     }
 
-    public void ChangeCourseIndexNumber(int course_Code)
-    {
+//    public CourseInfo ShowCourses(int indexNo)
+//    {
+//        return courseManager.RegisteredCourses(this, indexNo);
+//    }
 
+    public void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass)
+    {
+        courseManager.ChangeCourseIndexNumber(this,oldClass,newClass);
     }
 
     public void SwapIndexNumber(int index_ID, int student_ID)
@@ -60,14 +73,29 @@ public class Student extends User implements IStudent{
         
     }
 
-    public int CheckCourseVacancy(int indexId)
+    public int CheckCourseVacancy(String indexId)
     {
         return 0;
     }
 
     @Override
     public String ToStr() {
-        String[] raw = new String[]{matricNo,accessPeriod};
+        String[] raw = new String[]{matricNo,accessPeriodStart,accessPeriodEnd};
         return super.ToStr() + "," + String.join(",",raw);
     }
+    public String getMatricNo()
+    {
+        return matricNo;
+    }
+
+    public void addCourse(CourseInfo courseInfo)
+    {
+        this.courseInfoList.add(courseInfo);
+    }
+
+    public void dropCourse(CourseInfo courseInfo)
+    {
+        this.courseInfoList.remove(courseInfo);
+    }
+
 }

@@ -1,8 +1,15 @@
 import java.io.File;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Admin extends User implements IAdmin{
 
@@ -15,15 +22,50 @@ public class Admin extends User implements IAdmin{
         return 0;
     }
 
-    public void EditStudentAccessPeriod(Student student, String accessPeriod)
+    public void EditStudentAccessPeriod()
     {
-        student.setAccessPeriod(accessPeriod);
+        Scanner sr = new Scanner(System.in);  // Create a Scanner object
+        System.out.println("Enter Student Matrix No: ");
+        String studentMatrixNo = sr.nextLine();
+
+        Student student = null;
+
+        for(Student j : Singleton_StudentProfile.getInstance().studentProfileDB){
+            if(j.getMatricNo().equals(studentMatrixNo)){
+                student = j;  //Assign the student obj
+
+                String [] info = new String[]{
+                        j.getName(),j.getMatricNo(),j.getAccessPeriodStart(),j.getAccessPeriodEnd()
+                };
+
+                System.out.println("Retrieving Student Info: ");
+                System.out.println(String.join(" | ",info));
+                break;
+            }
+        }
+
+        boolean valid = false;
+        do{
+            try{
+                System.out.println("Enter New Access Period (dd/MM/yyyy): ");
+                String _accessPeriod = sr.nextLine();
+
+                new SimpleDateFormat("dd/MM/yyyy").parse(_accessPeriod);
+                student.setAccessPeriodEnd(_accessPeriod);
+                valid = true;
+            }
+            catch(Exception e){
+                System.out.println("Invalid access period, please try again!");
+            }
+        }
+        while(!valid);
+        System.out.println("New Access Period: " + student.getAccessPeriodEnd());
     }
 
     public void AddStudent()
     {
         String filepath = System.getProperty("user.dir") + "/StudentProfile";
-        IOUtills.ReadFile(filepath + "/chunfei.txt");
+        IOUtills.ReadFile(filepath + "/user.txt");
 
         ArrayList<String> studentList = IOUtills.getFileInput();
 
@@ -59,13 +101,20 @@ public class Admin extends User implements IAdmin{
         String password = PasswordUtils.generatePassword(8).toString(); //Generate Random password
         Enum gender = sex.equals("M") ? EnumHelper.Gender.MALE : EnumHelper.Gender.FEMALE;
 
+        //<editor-fold desc="<Get Current Date>">
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String getTodayDate = myDateObj.format(myFormatObj);
+        //</editor-fold>
+
+        //TODO: set Period End - today + 3months
+        String accessPeriodEnd = myDateObj.plusMonths(3).format(myFormatObj);
         Student newStudent = new Student(name,nationality,email,username,
                 password,contactNo, EnumHelper.UserRole.STUDENT, (EnumHelper.Gender) gender,
-                matricNo,new Date().toString());
+                matricNo,getTodayDate,accessPeriodEnd);
 
         String formatStudent = newStudent.ToStr();
         formatStudent = String.join("\r\n",studentList) + "\r\n" + formatStudent;
-
 
         //<editor-fold desc="<Add into StudentProfile>">
         new IOUtills("chunfei","txt",formatStudent,filepath);
@@ -73,67 +122,102 @@ public class Admin extends User implements IAdmin{
         //</editor-fold>
 
         //<editor-fold desc="<Add into UserTable>">
-         Account user_2 = new Account(username,password);
-         user_2.setUserRole(EnumHelper.UserRole.STUDENT);
-         user_2.addAccount();
+        Account user_2 = new Account(username,password);
+        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
+        user_2.addAccount();
         //</editor-fold>
-
-
-
-
-        //<editor-fold desc="">
-        //</editor-fold>
-
-
-
-
-
-
     }
 
     public void AddCourse(CourseInfo course)
     {
 
+        //Requirment Check registred courses max - 8; return error msg > 8
     }
 
     public void PrintStudentListByIndex(String indexNo)
     {
-        String studentCourseFile = System.getProperty("user.dir") + "/StudentCourseTable/chunfei.txt";
+        ArrayList<StudentCourse> data = Singleton_StudentCourse.getInstance().studentCourseDB;
+        List<StudentCourse> _StudentProfile = data.stream().filter(c -> c.getClassIndex().equals(indexNo)).collect(Collectors.toList());
+        ArrayList<Student> students = Singleton_StudentProfile.getInstance().studentProfileDB;
+
+        int counter = 0;
+        if(_StudentProfile.size() > 0){
+            System.out.println("\r\n===============");
+            System.out.println("Print Student List by Index ID: " + indexNo);
+            System.out.println("===============");
+            for(var j : _StudentProfile){
+
+                List<Student> stds = students.stream().filter(m -> m.getMatricNo().
+                        equals(j.getStudentMatricNo()))
+                        .collect(Collectors.toList());
+
+                if(stds.stream().count() > 0){
+                    var studentInfo = stds.get(0);
+                    String name = studentInfo.getName();
+                    String nationality = studentInfo.getNationality();
+                    String sex = studentInfo.getGender().toString();
+                    String [] reportContent = new String[] {name,nationality,sex};
+                    System.out.println((counter+1) + ". " + String.join(" | ",reportContent));
+                    counter++;
+                }
+            }
+            System.out.println("=====END=====");
+        }
+    }
+
+    public void PrintStudentListByCourse(String courseIndex)
+    {
+
+        ArrayList<StudentCourse> data = Singleton_StudentCourse.getInstance().studentCourseDB;
+        List<StudentCourse> _StudentProfile = data.stream().filter(c -> c.getCourseCode().equals(courseIndex)).collect(Collectors.toList());
+
+
+        int k = 0;
+        /*
+        String studentCourseFile = System.getProperty("user.dir") + "/StudentCourseTable/user.txt";
         IOUtills.ReadFile(studentCourseFile);
         ArrayList<String> _StudentCourse = IOUtills.getFileInput();
         ArrayList<String> getStudents = new ArrayList<>();
 
-        int found = 0;
-        for(int i = 0; i < _StudentCourse.size();i++){
-            String[] studentCourse = _StudentCourse.get(i).split(",");
-            System.out.println("Course Index [" + (i+1) + "] = " + studentCourse[1]);
-
-            if(indexNo.equals(studentCourse[1])){
-                getStudents.add(studentCourse[0]);
-                System.out.println("matched");
-                found++;
+        for(int j = 0; j < _StudentCourse.size();j++){
+            String[] studentInfo = _StudentCourse.get(j).split(",");
+            String _courseName = studentInfo[2];
+            if(_courseName.equals(courseName)){
+                String name = studentInfo[0];
+                getStudents.add(name);
             }
         }
-        System.out.println("Total students: " + found);
 
-        String studentProfileFile = System.getProperty("user.dir") + "/StudentCourseTable/chunfei.txt";
-        IOUtills.ReadFile(studentProfileFile);
-        ArrayList<String> _StudentProfile = IOUtills.getFileInput();
+        if(getStudents.size() > 0){
+            String studentProfileFile = System.getProperty("user.dir") + "/StudentProfile/user.txt";
+            IOUtills.ReadFile(studentProfileFile);
+            ArrayList<String> _StudentProfile = IOUtills.getFileInput();
 
+            System.out.println("\r\n===============");
+            System.out.println("Print Student List by Course Name: " + courseName);
+            System.out.println("===============");
 
+            for(int j = 0; j < _StudentProfile.size();j++){
+                String[] studentInfo = _StudentProfile.get(j).split(",");
+                String name = studentInfo[0];
+
+                if(getStudents.contains(name)){
+                    String nationality = studentInfo[1];
+                    String sex = studentInfo[7];
+                    String [] reportContent = new String[] {name,nationality,sex};
+                    System.out.println((j+1) + ". " + String.join(" | ",reportContent));
+                }
+            }
+            System.out.println("=====END=====");
+        }
+         */
     }
 
-
-
-    //private void Search
-
-    public void PrintStudentListByCourse(CourseInfo courseInfo)
+    public int CheckCourseVacancy(String indexId)
     {
-
-    }
-
-    public int CheckCourseVacancy(int indexId)
-    {
+        //Check from ClassTable and Compare last 2 param
+        //Need to default a MAX vacancy for class
+        System.out.println("hello");
         return 0;
-    } 
+    }
 }

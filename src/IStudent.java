@@ -1,4 +1,5 @@
 
+
 public interface IStudent extends IUser {
     void AddCourse(CourseInfo courseInfo);
 
@@ -6,7 +7,7 @@ public interface IStudent extends IUser {
 
     void RegisteredCourses();
 
-    void ChangeCourseIndexNumber(int course_Code);
+    void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass);
 
-    void SwapIndexNumber(int index_ID, int student_ID);
+    void SwapIndexNumber(int index_ID, int studentAccount);
 }

@@ -1,5 +1,5 @@
 public interface IUser {
 
-    public int CheckCourseVacancy(int indexId);
+    public int CheckCourseVacancy(String indexId);
 
 }
