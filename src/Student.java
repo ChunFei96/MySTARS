@@ -73,7 +73,7 @@ public class Student extends User implements IStudent{
         
     }
 
-    public int CheckCourseVacancy(String indexId)
+    public int CheckCourseVacancy()
     {
         return 0;
     }

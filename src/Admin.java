@@ -139,6 +139,7 @@ public class Admin extends User implements IAdmin{
         ArrayList<StudentCourse> data = Singleton_StudentCourse.getInstance().studentCourseDB;
         List<StudentCourse> _StudentProfile = data.stream().filter(c -> c.getClassIndex().equals(indexNo)).collect(Collectors.toList());
         ArrayList<Student> students = Singleton_StudentProfile.getInstance().studentProfileDB;
+        ArrayList<String> output = new ArrayList<>();
 
         int counter = 0;
         if(_StudentProfile.size() > 0){
@@ -152,72 +153,148 @@ public class Admin extends User implements IAdmin{
                         .collect(Collectors.toList());
 
                 if(stds.stream().count() > 0){
-                    var studentInfo = stds.get(0);
+                    Student studentInfo = stds.get(0);
                     String name = studentInfo.getName();
                     String nationality = studentInfo.getNationality();
                     String sex = studentInfo.getGender().toString();
                     String [] reportContent = new String[] {name,nationality,sex};
-                    System.out.println((counter+1) + ". " + String.join(" | ",reportContent));
+                    String print = (counter+1) + ". " + String.join(" | ",reportContent);
+                    System.out.println(print);
+
+                    output.add(print);
                     counter++;
                 }
             }
             System.out.println("=====END=====");
+
+            Scanner sr = new Scanner(System.in);
+            boolean valid = false;
+            do{
+                System.out.println("Do you want to output the report? (Y/N)");
+                String generateTxt = sr.nextLine().toUpperCase();
+
+                if(generateTxt.equals("Y")){
+                    Date currentTime = new Date();
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                    String strDate = formatter.format(currentTime);
+                    IOUtills.setFilename("StudentList_" + indexNo + "_" + strDate);
+                    IOUtills.setDirectoryName(System.getProperty("user.dir"));
+                    IOUtills.setFiletype("txt");
+                    IOUtills.setContent(String.join("\r\n",output));
+                    IOUtills.WriteFile();
+                    valid = true;
+                }
+                else if(generateTxt.equals("N")){
+                    valid = true;
+                    System.out.println("Pending message for NOT printing the report.");
+                }
+            }while(!valid);
         }
     }
 
-    public void PrintStudentListByCourse(String courseIndex)
+    public void PrintStudentListByCourse(String courseCode)
     {
-
         ArrayList<StudentCourse> data = Singleton_StudentCourse.getInstance().studentCourseDB;
-        List<StudentCourse> _StudentProfile = data.stream().filter(c -> c.getCourseCode().equals(courseIndex)).collect(Collectors.toList());
+        List<StudentCourse> _StudentProfile = data.stream().filter(c -> c.getCourseCode().equals(courseCode)).collect(Collectors.toList());
 
+        ArrayList<Student> students = Singleton_StudentProfile.getInstance().studentProfileDB;
+        ArrayList<String> output = new ArrayList<>();
 
-        int k = 0;
-        /*
-        String studentCourseFile = System.getProperty("user.dir") + "/StudentCourseTable/user.txt";
-        IOUtills.ReadFile(studentCourseFile);
-        ArrayList<String> _StudentCourse = IOUtills.getFileInput();
-        ArrayList<String> getStudents = new ArrayList<>();
-
-        for(int j = 0; j < _StudentCourse.size();j++){
-            String[] studentInfo = _StudentCourse.get(j).split(",");
-            String _courseName = studentInfo[2];
-            if(_courseName.equals(courseName)){
-                String name = studentInfo[0];
-                getStudents.add(name);
-            }
-        }
-
-        if(getStudents.size() > 0){
-            String studentProfileFile = System.getProperty("user.dir") + "/StudentProfile/user.txt";
-            IOUtills.ReadFile(studentProfileFile);
-            ArrayList<String> _StudentProfile = IOUtills.getFileInput();
-
+        int counter = 0;
+        if(_StudentProfile.size() > 0){
             System.out.println("\r\n===============");
-            System.out.println("Print Student List by Course Name: " + courseName);
+            System.out.println("Print Student List by Course Name: " + _StudentProfile.get(0).getCourseCode());
             System.out.println("===============");
 
-            for(int j = 0; j < _StudentProfile.size();j++){
-                String[] studentInfo = _StudentProfile.get(j).split(",");
-                String name = studentInfo[0];
+            for(var j : _StudentProfile){
 
-                if(getStudents.contains(name)){
-                    String nationality = studentInfo[1];
-                    String sex = studentInfo[7];
+                List<Student> stds = students.stream().filter(m -> m.getMatricNo().
+                        equals(j.getStudentMatricNo()))
+                        .collect(Collectors.toList());
+
+                if(stds.stream().count() > 0){
+                    Student studentInfo = stds.get(0);
+                    String name = studentInfo.getName();
+                    String nationality = studentInfo.getNationality();
+                    String sex = studentInfo.getGender().toString();
                     String [] reportContent = new String[] {name,nationality,sex};
-                    System.out.println((j+1) + ". " + String.join(" | ",reportContent));
+
+                    String print = (counter+1) + ". " + String.join(" | ",reportContent);
+                    System.out.println(print);
+
+                    output.add(print);
+                    counter++;
                 }
             }
             System.out.println("=====END=====");
+
+            Scanner sr = new Scanner(System.in);
+            boolean valid = false;
+            do{
+                System.out.println("Do you want to output the report? (Y/N)");
+                String generateTxt = sr.nextLine().toUpperCase();
+
+                if(generateTxt.equals("Y")){
+                    Date currentTime = new Date();
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                    String strDate = formatter.format(currentTime);
+                    IOUtills.setFilename("StudentList_" + _StudentProfile.get(0).getCourseCode() + "_" + strDate);
+                    IOUtills.setDirectoryName(System.getProperty("user.dir"));
+                    IOUtills.setFiletype("txt");
+                    IOUtills.setContent(String.join("\r\n",output));
+                    IOUtills.WriteFile();
+                    valid = true;
+                }
+                else if(generateTxt.equals("N")){
+                    valid = true;
+                    System.out.println("Pending message for NOT printing the report.");
+                }
+            }while(!valid);
         }
-         */
     }
 
-    public int CheckCourseVacancy(String indexId)
+    public int CheckCourseVacancy()
     {
-        //Check from ClassTable and Compare last 2 param
-        //Need to default a MAX vacancy for class
-        System.out.println("hello");
+        int counter = 0;
+        int c = 0;
+        boolean isCourseValid = false;
+        boolean isClassValid = false;
+        Scanner sr = new Scanner(System.in);
+
+        ArrayList<CourseInfo> CourseInfo = Singleton_CourseInfo.getInstance().courseInfoDB;
+        for(CourseInfo Course : CourseInfo){
+            System.out.println((counter + 1) + ". " + Course.getCode() + " " + Course.getName());
+            counter++;
+        }
+
+        do{
+            System.out.println("Select A Course: " );
+            int courseOption = sr.nextInt();
+
+            if(courseOption > 0 && courseOption <= CourseInfo.size()){
+                CourseInfo selectedCourse = CourseInfo.get(courseOption-1);
+
+                for(var classInfo : selectedCourse.getClassList()){
+                    System.out.println((c+1)  + ". " + classInfo.getCourseCodeReference() + "'s index number: " + classInfo.getIndexNo());
+                    c++;
+                }
+
+                do{
+                    System.out.println("Select A Class Index: ");
+                    int classOption = sr.nextInt();
+
+                    if(classOption > 0 && classOption <= selectedCourse.getClassList().size()){
+                        var selectedClassIndex = selectedCourse.getClassList().get(classOption-1);
+                        System.out.println("Total available vacancies: " + selectedClassIndex.getVacancy());
+                        isClassValid = true;
+                    }
+                }while(!isClassValid);
+
+                if(isClassValid){
+                    isCourseValid = true;
+                }
+            }
+        }while(!isCourseValid);
         return 0;
     }
 }

@@ -47,31 +47,20 @@ public class MyStars {
         InitCourseDB();
         InitStudentCourseDB();
 
-        boolean testing = false;
+        Login login = new Login(username,new String(password));
+        if(login.validateLogin()) {
+            System.out.println("\nWelcome back! " + login.getMyUsername());
 
-        if(!testing){
-            Login login = new Login(username,new String(password));
-            if(login.validateLogin()) {
-                System.out.println("\nWelcome back! " + login.getMyUsername());
-
-                if(login.getUser().getUserRole() == EnumHelper.UserRole.STUDENT){
-                    Student student = login.getStudentProfile();
-                    StudentSelection(student);
-                }
-                else if(login.getUser().getUserRole() == EnumHelper.UserRole.ADMIN){
-                    Admin admin = login.getAdminProfile();
-                    AdminMenu();
-
-
-                    //admin.EditStudentAccessPeriod(); //Task 1 DONE
-                    //admin.AddStudent();  //Task  2 DONE
-                    //admin.AddCourse();  Task 3
-                    //admin.CheckCourseVacancy( "00192"); //Task 4
-                    //admin.PrintStudentListByIndex("00318");  //Task 5 DONE
-                    admin.PrintStudentListByCourse("CZ2003"); //Task 6
-                }
+            if(login.getUser().getUserRole() == EnumHelper.UserRole.STUDENT){
+                Student student = login.getStudentProfile();
+                StudentSelection(student);
+            }
+            else if(login.getUser().getUserRole() == EnumHelper.UserRole.ADMIN){
+                Admin admin = login.getAdminProfile();
+                AdminSelection();
             }
         }
+
     }
 
     private static void StudentMenu()
@@ -296,6 +285,35 @@ public class MyStars {
                     break;
             }
         }while (choice < 8);
+    }
+
+    private static void AdminSelection(){
+        int choice = 0;
+        int optionSize = 6;
+
+        AdminMenu();
+
+        /*
+        do{
+            switch (choice){
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
+
+        }while(choice != -1);
+        
+         */
+
+        //admin.EditStudentAccessPeriod(); //Task 1 DONE
+        //admin.AddStudent();  //Task  2 DONE
+        //admin.AddCourse();  Task 3
+        //admin.CheckCourseVacancy(); //Task 4 DONE
+        //admin.PrintStudentListByIndex("00318");  //Task 5 DONE
+        //admin.PrintStudentListByCourse("CZ2003"); //Task 6 DONE
     }
 
     private static void InitCourseDB()
