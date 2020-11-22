@@ -61,7 +61,7 @@ public class Login {
     public Login(String myUsername, String myPassword) {
         this.myUsername = myUsername;
         this.myPassword = myPassword;
-        user = new Account(myUsername,myPassword, EnumHelper.UserRole.STUDENT);
+        user = new Account(myUsername,myPassword);
     }
 
     public Boolean validateLogin(){

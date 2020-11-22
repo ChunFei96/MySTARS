@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class CourseManager {
 
     private MailHelper mailHelper;
@@ -9,15 +7,18 @@ public class CourseManager {
         mailHelper = new MailHelper();
     }
 
-    //region Public
+    //<editor-fold desc="Publlic">
     public int CheckCourseVacancy(int indexId)
     {
         return 0;
-    } 
-    
-    //region Student 
-    public ArrayList<StudentCourse> AddCourse(Student student, CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
+    }
+
+    //<editor-fold desc="Student">
+    public void AddCourse(Student student, CourseInfo courseInfo)
     {
+        Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
+        Singleton_StudentCourse singleton_studentCourse = Singleton_StudentCourse.getInstance();
+
         student.addCourse(courseInfo);
 
         // add course in student course DB
@@ -26,60 +27,108 @@ public class CourseManager {
         studentCourse.setCourseCode(courseInfo.getCode());
         studentCourse.setCourseIndex(courseInfo.getClassList().get(0).getIndexNo());
 
-        studentCourseList.add(studentCourse);
+        singleton_studentCourse.studentCourseDB.add(studentCourse);
 
         // write back to Student Course txt file
         String content = student.getMatricNo() + "," + courseInfo.getCode() + "," + courseInfo.getClassList().get(0).getIndexNo() ;
 
-        IOUtills saveCourse = new IOUtills("StudentCourse","txt",content,"StudentCourseTable");
-        IOUtills.WriteFile(true);
+            UpdateDB("StudentCourse","txt",content,"StudentCourseTable",true);
 
         // decrease the course class's vacancy by 1
-
-
-
-
+        if(singleton_courseInfo.courseInfoDB != null && singleton_courseInfo.courseInfoDB.size() > 0)
+        {
+            String classContent = "";
+            for(int j=0; j < singleton_courseInfo.courseInfoDB.size(); j++)
+            {
+                CourseInfo courseInfo1 = singleton_courseInfo.courseInfoDB.get(j);
+                if(courseInfo1.getCode() == courseInfo.getCode())
+                {
+                    for(int k=0; k < singleton_courseInfo.courseInfoDB.get(j).getClassList().size(); k++)
+                    {
+                        ClassInfo classInfo = singleton_courseInfo.courseInfoDB.get(j).getClassList().get(k);
+                        if(classInfo.getIndexNo() == courseInfo.getClassList().get(0).getIndexNo())
+                        {
+                            if(classInfo.getVacancy() > 0)
+                                classInfo.setVacancy(courseInfo.getClassList().get(0).getVacancy() - 1);
+                            else
+                                classInfo.setQueue(courseInfo.getClassList().get(0).getQueue() + 1);
+                        }
+                        classContent += classInfo.getIndexNo() + "," + classInfo.getCourseCodeReference() + "," + classInfo.getGroupNo() + "," + classInfo.getDay() + "," +
+                                classInfo.getTime() + "," + classInfo.getVenue() + "," + classInfo.getRemark() + "," + classInfo.getVacancy() + "," + classInfo.getQueue() + "\n";
+                    }
+                }
+            }
+            UpdateDB(courseInfo.getCode()+ "_Class","txt",classContent,"ClassTable",false);
+        }
 
         mailHelper.setRecipientEmail(student.getEmail());
         mailHelper.setMessage("Congratulation! you have registered " + courseInfo.getName() + " !");
         mailHelper.setEmailSubject("Successfully registered " + courseInfo.getName() + " !");
         //mailHelper.SendEmail();
 
-        return studentCourseList;
     }
 
-    public ArrayList<StudentCourse> DropCourse(Student student, CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
+    public void DropCourse(Student student, CourseInfo courseInfo)
     {
+        Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
+        Singleton_StudentCourse singleton_studentCourse = Singleton_StudentCourse.getInstance();
+
          // remove course in student courseArrayList
          student.dropCourse(courseInfo);
 
          // remove course in student course DB
-         StudentCourse studentCourse = new StudentCourse();
-         studentCourse.setStudentMatricNo(student.getMatricNo());
-         studentCourse.setCourseCode(courseInfo.getCode());
-         studentCourse.setCourseIndex(courseInfo.getClassList().get(0).getIndexNo());
-
-         studentCourseList.remove(studentCourse);
-
-        // write back to Student Course txt file
-        if(studentCourseList != null && studentCourseList.size() > 0)
+        if(singleton_studentCourse.studentCourseDB != null && singleton_studentCourse.studentCourseDB.size() > 0)
         {
             String content = "";
-            for(int i =0; i < studentCourseList.size(); i++)
+            for(int i=0; i < singleton_studentCourse.studentCourseDB.size();)
             {
-                content = studentCourseList.get(i).getStudentMatricNo() + "," + studentCourseList.get(i).getCourseCode() + "," + studentCourseList.get(i).getCourseIndex() + "\n" ;
+                StudentCourse removedstudentCourse = singleton_studentCourse.studentCourseDB.get(i);
+                if(removedstudentCourse.getStudentMatricNo() == student.getMatricNo() && removedstudentCourse.getCourseCode() == courseInfo.getCode() &&
+                        removedstudentCourse.getCourseIndex() == courseInfo.getClassList().get(0).getIndexNo())
+                    singleton_studentCourse.studentCourseDB.remove(removedstudentCourse);
+                else{
+                    content += singleton_studentCourse.studentCourseDB.get(i).getStudentMatricNo() + "," + singleton_studentCourse.studentCourseDB.get(i).getCourseCode() + "," + singleton_studentCourse.studentCourseDB.get(i).getCourseIndex() + "\n" ;
+                    i++;
+                }
+
+
             }
-            IOUtills saveCourse = new IOUtills("StudentCourse","txt",content,"StudentCourseTable");
-            IOUtills.WriteFile();
+            UpdateDB("StudentCourse","txt",content,"StudentCourseTable",false);
         }
         else
         {
             // the db is empty
-            IOUtills saveCourse = new IOUtills("StudentCourse","txt","","StudentCourseTable");
-            IOUtills.WriteFile();
+            UpdateDB("StudentCourse","txt","","StudentCourseTable",false);
+
         }
 
         // increase the course class's vacancy by 1
+        if(singleton_courseInfo.courseInfoDB != null && singleton_courseInfo.courseInfoDB.size() > 0)
+        {
+            String content = "";
+            for(int j=0; j < singleton_courseInfo.courseInfoDB.size(); j++)
+            {
+                CourseInfo courseInfo1 = singleton_courseInfo.courseInfoDB.get(j);
+                if(courseInfo1.getCode() == courseInfo.getCode())
+                {
+                    for(int k=0; k < singleton_courseInfo.courseInfoDB.get(j).getClassList().size(); k++)
+                    {
+                        ClassInfo classInfo = singleton_courseInfo.courseInfoDB.get(j).getClassList().get(k);
+                        if(classInfo.getIndexNo() == courseInfo.getClassList().get(0).getIndexNo())
+                        {
+                            if(classInfo.getQueue() <=0)
+                                classInfo.setVacancy(courseInfo.getClassList().get(0).getVacancy() + 1);
+                            else
+                                classInfo.setQueue(courseInfo.getClassList().get(0).getQueue() - 1);
+                        }
+                        content += classInfo.getIndexNo() + "," + classInfo.getCourseCodeReference() + "," + classInfo.getGroupNo() + "," + classInfo.getDay() + "," +
+                                    classInfo.getTime() + "," + classInfo.getVenue() + "," + classInfo.getRemark() + "," + classInfo.getVacancy() + "," + classInfo.getQueue() + "\n";
+                    }
+                }
+            }
+
+            UpdateDB(courseInfo.getCode()+ "_Class","txt",content,"ClassTable",false);
+        }
 
 
          mailHelper.setRecipientEmail(student.getEmail());
@@ -87,16 +136,18 @@ public class CourseManager {
          mailHelper.setEmailSubject("Successfully dropped " + courseInfo.getName() + " !");
          //mailHelper.SendEmail();
 
-        return studentCourseList;
     }
 
     public void RegisteredCourses(Student student)
     {
+        String menuTitle = student.getName() + " registered courses";
+        System.out.println("\n=========================================== " +  menuTitle + " ================================================\n");
         if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
         {
             for(int i=0; i < student.getCourseInfoList().size() ; i++)
             {
-                System.out.println(i+1 + ": " + student.getCourseInfoList().get(i).getCourseInfo());
+                System.out.println( i+1 + ": " + student.getCourseInfoList().get(i).getCourseInfo());
+                System.out.println("   " + student.getCourseInfoList().get(i).getClassList().get(0).getClassInfo());
             }
         }
         else
@@ -160,23 +211,17 @@ public class CourseManager {
     {
 
     }
-    //endregion
-    //endregion
-    
-    //region Private 
-//    private Boolean IsCourseDuplicate(Student student, CourseInfo courseInfo)
-//    {
-//        if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
-//        {
-//            for(int i=0; i < student.getCourseInfoList().size() ; i++)
-//            {
-//                if(student.getCourseInfoList().get(i).getIndexNo() == courseInfo.getIndexNo()){
-//                    System.out.println( student.getName() + " already registered " + courseInfo.getIndexNo() );
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-    //endregion
+    //</editor-fold>
+    //</editor-fold>
+
+    //<editor-fold desc="Private">
+    private void UpdateDB(String filename,String filetype,String content,String directoryName, Boolean append)
+    {
+        IOUtills saveCourse = new IOUtills(filename,filetype,content,directoryName);
+        if(!append)
+            IOUtills.WriteFile();
+        else
+            IOUtills.WriteFile(true);
+    }
+    //</editor-fold>
 }

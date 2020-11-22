@@ -5,14 +5,13 @@ import java.util.*;
 public class MyStars {
 
     private  static Console console;
-    private static ArrayList<CourseInfo> courseInfoDB;
-    private static ArrayList<StudentCourse> studentCourseDB;
 
     public static void main(String[] args) {
 
 
         //Create new user: <<user_2>>
-        Account user_2 = new Account("chunfei","abc123", EnumHelper.UserRole.STUDENT);
+        Account user_2 = new Account("chunfei","abc123");
+        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
         user_2.addAccount();
 
         String username = "chunfei";
@@ -83,11 +82,13 @@ public class MyStars {
 
     private static void CourseMenu()
     {
+        Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
+
         System.out.println("\n=========================================== Course information menu ================================================\n");
-        if(courseInfoDB != null && courseInfoDB.size() > 0)
+        if(singleton_courseInfo.courseInfoDB != null && singleton_courseInfo.courseInfoDB.size() > 0)
         {
-            for (int i = 0; i < courseInfoDB.size(); i++) {
-                System.out.println( i+1 + ": " + courseInfoDB.get(i).getCourseInfo());
+            for (int i = 0; i < singleton_courseInfo.courseInfoDB.size(); i++) {
+                System.out.println( i+1 + ": " + singleton_courseInfo.courseInfoDB.get(i).getCourseInfo());
             }
             System.out.println("Please select a course: ");
         }
@@ -106,9 +107,41 @@ public class MyStars {
         }
     }
 
-    private static void StudentCourseMenu(ArrayList<CourseInfo> courseInfoDB)
+    private  static void ShowClassVacancyMenu(CourseInfo course)
     {
-        System.out.println("\n=========================================== Student registered courses ================================================\n");
+        String menuTitle = course.getCode() + " " + course.getName();
+        System.out.println("\n=========================================== " + menuTitle + " ================================================\n");
+        if(course != null)
+        {
+            for (int i = 0; i < course.getClassList().size(); i++) {
+                ClassInfo classInfo = course.getClassList().get(i);
+                System.out.println( i+1 + ": " + classInfo.getIndexNo() + " class has left " + classInfo.getVacancy() + " slots");
+            }
+            System.out.println("\n");
+        }
+    }
+
+    private  static int ChangeClassMenu(CourseInfo course)
+    {
+        Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
+        int size=0;
+        String menuTitle = course.getCode() + " " + course.getName();
+        System.out.println("\n=========================================== " + menuTitle + " ================================================\n");
+        if(course != null)
+        {
+            for (int i = 0; i < course.getClassList().size(); i++) {
+                System.out.println( i+1 + ": " + course.getClassList().get(i).getClassInfo());
+            }
+            System.out.println("Please select a new class to swap: ");
+        }
+
+        return size;
+    }
+
+    private static void StudentCourseMenu(ArrayList<CourseInfo> courseInfoDB, String studentName)
+    {
+        String menuTitle = studentName + " registered courses";
+        System.out.println("\n=========================================== " + menuTitle + " ================================================\n");
         if(courseInfoDB != null && courseInfoDB.size() > 0)
         {
             for (int i = 0; i < courseInfoDB.size(); i++) {
@@ -119,8 +152,24 @@ public class MyStars {
         }
     }
 
+    private static void StudentChangeClassMenu(ArrayList<CourseInfo> courseInfoDB, String studentName)
+    {
+        String menuTitle = studentName + " registered courses";
+        System.out.println("\n=========================================== " + menuTitle + " ================================================\n");
+        if(courseInfoDB != null && courseInfoDB.size() > 0)
+        {
+            for (int i = 0; i < courseInfoDB.size(); i++) {
+                System.out.println( i+1 + ": " + courseInfoDB.get(i).getCourseInfo());
+                System.out.println("   " + courseInfoDB.get(i).getClassList().get(0).getClassInfo());
+            }
+            System.out.println("Please select a registered course you wish to change: ");
+        }
+    }
+
     private static void StudentSelection(Student student)
     {
+        Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
+
         // student selection
         int choice = 0;
         do{
@@ -132,42 +181,93 @@ public class MyStars {
             {
                 case 1:
                     CourseMenu();
-                    int courseSelection = ChoiceValidation(courseInfoDB.size());
-                    ClassMenu(courseInfoDB.get(courseSelection-1));
-                    int classSelection = ChoiceValidation(courseInfoDB.size());
+                    int courseSelection = ChoiceValidation(singleton_courseInfo.courseInfoDB.size());
+                    ClassMenu(singleton_courseInfo.courseInfoDB.get(courseSelection-1));
+                    int classSelection = ChoiceValidation(singleton_courseInfo.courseInfoDB.get(courseSelection-1).getClassList().size());
 
-                    CourseInfo selectedCourse = new CourseInfo(courseInfoDB.get(courseSelection-1));
-                    selectedCourse.addClass(courseInfoDB.get(courseSelection-1).getClassList().get(classSelection-1));
+                    CourseInfo selectedCourse = new CourseInfo(singleton_courseInfo.courseInfoDB.get(courseSelection-1));
+                    selectedCourse.addClass(singleton_courseInfo.courseInfoDB.get(courseSelection-1).getClassList().get(classSelection-1));
 
-                    studentCourseDB = student.AddCourse(selectedCourse, studentCourseDB);
+                    student.AddCourse(selectedCourse);
                     break;
                 case 2:
-                    StudentCourseMenu(student.getCourseInfoList());
+                    StudentCourseMenu(student.getCourseInfoList(), student.getName());
                     int dropSelection = ChoiceValidation(student.getCourseInfoList().size());
 
-                    studentCourseDB = student.DropCourse(student.getCourseInfoList().get(dropSelection-1), studentCourseDB);
+                    student.DropCourse(student.getCourseInfoList().get(dropSelection-1));
                     break;
                 case 3:
-//                    student.RegisteredCourses();
+                    student.RegisteredCourses();
                     break;
                 case 4:
+                    CourseMenu();
+                    int courseSelection2 = ChoiceValidation(singleton_courseInfo.courseInfoDB.size());
+                    ShowClassVacancyMenu(singleton_courseInfo.courseInfoDB.get(courseSelection2-1));
+
+
                     break;
                 case 5:
-//                    StudentCourseMenu(student.getCourseInfoList());
-//                    System.out.println("Please enter your current index no");
-//                    int oldIndexSelection = ChoiceValidation(student.getCourseInfoList().size());
-//                    CourseInfo currentCourse = student.ShowCourses(oldIndexSelection);
-//
-//                    CourseMenu(courseInfoDB);
-//                    System.out.println("Please enter the new index no");
-//                    int newIndexSelection = ChoiceValidation(courseInfoDB.size());
-//                    CourseInfo newCourse = student.ShowCourses(newIndexSelection);
-//
-//                    System.out.println("Are you confirm to change index number?Y(1)/N(2)");
-//                    int decision = ChoiceValidation(2);
-//                    student.ChangeCourseIndexNumber(currentCourse, newCourse);
+                    // remove old student course class
+                    StudentChangeClassMenu(student.getCourseInfoList(), student.getName());
+                    int dropSelection5 = ChoiceValidation(student.getCourseInfoList().size());
+
+
+                    for (int i = 0; i < singleton_courseInfo.courseInfoDB.size(); i++) {
+                        if(student.getCourseInfoList().get(dropSelection5-1).getCode() == singleton_courseInfo.courseInfoDB.get(i).getCode()) {
+                            // add new student course class
+                            ChangeClassMenu(singleton_courseInfo.courseInfoDB.get(i));
+                            int classSelection5 = ChoiceValidation(singleton_courseInfo.courseInfoDB.get(i).getClassList().size());
+
+                            CourseInfo selectedCourse5 = new CourseInfo(singleton_courseInfo.courseInfoDB.get(i));
+                            selectedCourse5.addClass(singleton_courseInfo.courseInfoDB.get(i).getClassList().get(classSelection5-1));
+
+                            student.AddCourse(selectedCourse5);
+
+                            student.DropCourse(student.getCourseInfoList().get(dropSelection5-1));
+                            break;
+                        }
+                    }
                     break;
                 case 6:
+                    StudentChangeClassMenu(student.getCourseInfoList(), student.getName());
+                    int dropSelection6 = ChoiceValidation(student.getCourseInfoList().size());
+
+                    CourseInfo courseInfo6 = student.getCourseInfoList().get(dropSelection6-1);
+
+
+                    System.out.println("Student 2: ");
+                    System.out.println("Username: ");
+                    sc.nextLine();
+                    String username = sc.nextLine();
+
+                    System.out.println("Password: ");
+                    String password = sc.nextLine();
+                    Login login = new Login(username,new String(password));
+                    if(login.validateLogin()) {
+                        Student student2 = login.getStudentProfile();
+
+                        for(int i =0; i < student2.getCourseInfoList().size(); i++)
+                        {
+                            if(courseInfo6.getCode() == student2.getCourseInfoList().get(i).getCode())
+                            {
+                                ClassMenu(courseInfo6);
+                                ClassMenu(student2.getCourseInfoList().get(i));
+                                System.out.println("Are you sure to swap with " + student2.getName() + " ?");
+                                System.out.println("Y(1)/N(2)");
+                                int decision6 = ChoiceValidation(2);
+                                if(decision6 ==1)
+                                {
+                                    student.addCourse(student2.getCourseInfoList().get(i));
+                                    student.dropCourse(courseInfo6);
+
+                                    student2.addCourse(courseInfo6);
+                                    student2.dropCourse(student2.getCourseInfoList().get(i));
+                                }
+                            }
+                        }
+
+
+                    }
                     break;
                 default:
                     System.out.println("See you again!");
@@ -179,7 +279,7 @@ public class MyStars {
 
     private static void InitCourseDB()
     {
-        courseInfoDB = new ArrayList<CourseInfo>();
+        Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
 
         //<editor-fold desc="read course info">
         String filepath = System.getProperty("user.dir") + "/CourseTable/" + "/CourseInfo.txt";
@@ -193,7 +293,7 @@ public class MyStars {
                 if(tempcourseInfoDB.get(i) != "")
                 {
                     CourseInfo course = new CourseInfo(tempcourseInfoDB.get(i));
-                    courseInfoDB.add(course);
+                    singleton_courseInfo.courseInfoDB.add(course);
 
                     //<editor-fold desc="read class info">
                     String class_filename = course.getCode() + "_Class.txt";
@@ -206,7 +306,7 @@ public class MyStars {
                         if(classInfoDB.get(j) != "")
                         {
                             ClassInfo classInfo = new ClassInfo(classInfoDB.get(j));
-                            courseInfoDB.get(i).addClass(classInfo);
+                            singleton_courseInfo.courseInfoDB.get(i).addClass(classInfo);
                         }
                     }
                 }
@@ -218,7 +318,7 @@ public class MyStars {
 
     private static void InitStudentCourseDB()
     {
-        studentCourseDB = new ArrayList<StudentCourse>();
+        Singleton_StudentCourse singleton_studentCourse = Singleton_StudentCourse.getInstance();
 
         //<editor-fold desc="read course info">
         String filepath = System.getProperty("user.dir") + "/StudentCourseTable/" + "/StudentCourse.txt";
@@ -230,31 +330,12 @@ public class MyStars {
                 if(tempstudentCourseDB.get(i) != "")
                 {
                     StudentCourse studentCourse = new StudentCourse(tempstudentCourseDB.get(i));
-                    studentCourseDB.add(studentCourse);
+                    singleton_studentCourse.studentCourseDB.add(studentCourse);
                 }
 
             }
         }
         //</editor-fold>
-    }
-
-
-    private static void UpdateStudentCourseDB(String matricNo)
-    {
-        courseInfoDB = new ArrayList<CourseInfo>();
-        String filepath = System.getProperty("user.dir") + "/StudentCourseTable/" + "/CourseInfo.txt";
-        IOUtills.ReadFile(filepath);
-
-        ArrayList<String> tempcourseInfoDB =  IOUtills.getFileInput();
-
-        if(tempcourseInfoDB != null && tempcourseInfoDB.size() > 0 )
-        {
-            for (int i = 0; i < tempcourseInfoDB.size(); i++) {
-                CourseInfo course = new CourseInfo(tempcourseInfoDB.get(i));
-                //courses.GetCourseInfo();
-                courseInfoDB.add(course);
-            }
-        }
     }
 
     private static int ChoiceValidation(int size)

@@ -1,9 +1,9 @@
-import java.util.ArrayList;
+
 
 public interface IStudent extends IUser {
-    ArrayList<StudentCourse> AddCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList);
+    void AddCourse(CourseInfo courseInfo);
 
-    ArrayList<StudentCourse> DropCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList);
+    void DropCourse(CourseInfo courseInfo);
 
     void RegisteredCourses();
 

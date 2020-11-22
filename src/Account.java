@@ -48,10 +48,9 @@ public class Account {
     }
 
     //Constructor
-    public Account(String username, String password, EnumHelper.UserRole role) {
+    public Account(String username, String password) {
         this.password = password;
         this.username = username;
-        this.userRole = role;
         System.out.println("username: <<" +  username + ">>");
         System.out.println("password: <<" +  password + ">>");
     }

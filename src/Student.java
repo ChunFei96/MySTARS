@@ -18,14 +18,14 @@ public class Student extends User implements IStudent{
     }
 
 
-    public ArrayList<StudentCourse> AddCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
+    public void AddCourse(CourseInfo courseInfo)
     {
-        return courseManager.AddCourse(this, courseInfo, studentCourseList);
+        courseManager.AddCourse(this, courseInfo);
     }
 
-    public ArrayList<StudentCourse> DropCourse(CourseInfo courseInfo, ArrayList<StudentCourse> studentCourseList)
+    public void DropCourse(CourseInfo courseInfo)
     {
-        return courseManager.DropCourse(this, courseInfo, studentCourseList);
+        courseManager.DropCourse(this, courseInfo);
     }
 
     public void RegisteredCourses()
@@ -48,7 +48,7 @@ public class Student extends User implements IStudent{
         
     }
 
-    public int CheckCourseVacancy(int indexId)
+    public int CheckCourseVacancy(int indexNo)
     {
         return 0;
     } 
