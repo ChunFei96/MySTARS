@@ -10,7 +10,7 @@ public class CourseManager {
     }
 
     //<editor-fold desc="Publlic">
-    public int CheckCourseVacancy(String indexId)
+    public int CheckCourseVacancy()
     {
         return 0;
     }
