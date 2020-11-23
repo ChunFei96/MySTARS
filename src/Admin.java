@@ -18,8 +18,7 @@ public class Admin extends User implements IAdmin{
         super(name, nationality, email, username, password, contactNo, EnumHelper.UserRole.ADMIN, sex);
     }
 
-    public void EditStudentAccessPeriod()
-    {
+    public void EditStudentAccessPeriod() throws Exception {
         new CourseManager().EditStudentAccessPeriod();
     }
 

@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 
 public class ClassInfo {
     private String indexNo;
@@ -117,4 +117,11 @@ public class ClassInfo {
         System.out.println("============");
         System.out.println("Enter your input: ");
     }
+
+    public String getRecordInDB(ClassInfo data){
+        String [] d = new String[] {data.getIndexNo(),data.getCourseCodeReference(),data.getGroupNo().toString(),data.getDay(),
+                data.getTime(),data.getVenue(),data.getRemark(),data.getVacancy().toString(),data.getQueue().toString()};
+        return String.join(",",d);
+    }
+
 }

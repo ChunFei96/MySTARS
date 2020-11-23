@@ -1,13 +1,16 @@
+import java.lang.reflect.Array;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class CourseManager {
+public class CourseManager{
 
     private MailHelper mailHelper;
 
@@ -275,8 +278,18 @@ public class CourseManager {
     //</editor-fold>
 
     //region Admin
-    public void EditStudentAccessPeriod()
-    {
+    public void EditStudentAccessPeriod() throws Exception {
+        //TODO: Beautify Print
+        System.out.println("Retrieving Student Info: ");
+        System.out.println("Name | Matrix No | Access Period (Start) | Access Period (End)");
+        for(Student j : Singleton_StudentProfile.getInstance().studentProfileDB){
+            String [] info = new String[]{
+                    j.getName(),j.getMatricNo(),j.getAccessPeriodStart(),j.getAccessPeriodEnd()
+            };
+            System.out.println(String.join(" | ",info));
+        }
+
+
         Scanner sr = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Enter Student Matrix No: ");
         String studentMatrixNo = sr.nextLine();
@@ -287,15 +300,16 @@ public class CourseManager {
             if(j.getMatricNo().equals(studentMatrixNo)){
                 student = j;  //Assign the student obj
 
-                String [] info = new String[]{
-                        j.getName(),j.getMatricNo(),j.getAccessPeriodStart(),j.getAccessPeriodEnd()
-                };
-
-                System.out.println("Retrieving Student Info: ");
-                System.out.println(String.join(" | ",info));
+//                String [] info = new String[]{
+//                        j.getName(),j.getMatricNo(),j.getAccessPeriodStart(),j.getAccessPeriodEnd()
+//                };
+//
+//                System.out.println("Retrieving Student Info: ");
+//                System.out.println(String.join(" | ",info));
                 break;
             }
         }
+        String unchangedData = student.getAllRecordInDB(studentMatrixNo);
 
         boolean valid = false;
         do{
@@ -303,24 +317,29 @@ public class CourseManager {
                 System.out.println("Enter New Access Period (dd/MM/yyyy): ");
                 String _accessPeriod = sr.nextLine();
 
+                //TODO: Catch Invalid Date entry
                 new SimpleDateFormat("dd/MM/yyyy").parse(_accessPeriod);
                 student.setAccessPeriodEnd(_accessPeriod);
                 valid = true;
-            }
-            catch(Exception e){
+            }catch(DateTimeParseException e){
                 System.out.println("Invalid access period, please try again!");
             }
         }
         while(!valid);
-        System.out.println("New Access Period: " + student.getAccessPeriodEnd());
+        System.out.println("You have successfully changed the student’s access period.");
+
+        unchangedData += "\r\n" + student.getRecordInDB(student);
+        UpdateDB("StudentProfile","txt",unchangedData.trim(),"StudentProfile",false);
     }
 
     public void AddStudent()
     {
-        String filepath = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
-        IOUtills.ReadFile(filepath);
+//        String filepath = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
+//        IOUtills.ReadFile(filepath);
+//
+//        ArrayList<String> studentList = IOUtills.getFileInput();
 
-        ArrayList<String> studentList = IOUtills.getFileInput();
+
 
         //<editor-fold desc="<User inputs>">
         Scanner sr = new Scanner(System.in);
@@ -337,8 +356,20 @@ public class CourseManager {
         System.out.println("Enter contactNo: ");
         String contactNo = sr.nextLine();
 
+        boolean sexValid = false;
         System.out.println("Enter sex (M/F): ");
         String sex = sr.nextLine();
+
+        do{
+            if(!(sex.toUpperCase().equals("M") || sex.toUpperCase().equals("F"))){
+                System.out.println("Error! Invalid key entry. Please re-enter.");
+                System.out.println("Enter sex (M/F): ");
+                sex = sr.nextLine();
+            }
+            else{
+                sexValid = true;
+            }
+        }while(!sexValid);
 
         System.out.println("Enter matricNo: ");
         String matricNo = sr.nextLine();
@@ -354,46 +385,63 @@ public class CourseManager {
         String getTodayDate = myDateObj.format(myFormatObj);
         //</editor-fold>
 
-        //TODO: set Period End - today + 3months
         String accessPeriodEnd = myDateObj.plusMonths(3).format(myFormatObj);
         Student newStudent = new Student(name,nationality,email,username,
                 password,contactNo, EnumHelper.UserRole.STUDENT, (EnumHelper.Gender) gender,
                 matricNo,getTodayDate,accessPeriodEnd);
 
-        String formatStudent = newStudent.ToStr();
+        boolean duplicateStudent = newStudent.checkDuplicateStudent(newStudent);
 
-        //Update Table 1
-        UpdateDB("StudentProfile","txt",formatStudent,"StudentProfile",true);
+        if(duplicateStudent){
+            System.out.println("Error! The student cannot be added as it already existed in the system!");
+        }
+        else{
+            String formatStudent = newStudent.ToStr();
 
+            //Update Table 1
+            UpdateDB("StudentProfile","txt",formatStudent,"StudentProfile",true);
 
-        //Update Table 2
-        Account user_2 = new Account(username,password);
-        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
-        user_2.addAccount();
+            //Update Table 2
+            Account user_2 = new Account(username,password);
+            user_2.setUserRole(EnumHelper.UserRole.STUDENT);
+            user_2.addAccount();
 
-        /*
-        formatStudent = String.join("\r\n",studentList) + "\r\n" + formatStudent;
+            System.out.println("A new student - " + name + " has added into database successfully.");
 
-        //<editor-fold desc="<Add into StudentProfile>">
-        new IOUtills("chunfei","txt",formatStudent,filepath);
-        IOUtills.WriteFile();
-        //</editor-fold>
-
-        //<editor-fold desc="<Add into UserTable>">
-        Account user_2 = new Account(username,password);
-        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
-        user_2.addAccount();
-        //</editor-fold>
-
-         */
+            //TODO: KIV
+//        var aa = Singleton_StudentProfile.getInstance().studentProfileDB;
+//        newStudent.PrintStudents(aa);
+        }
     }
 
     public void AddCourse()
     {
         Scanner myObj = new Scanner(System.in);
+        ArrayList<CourseInfo> courseInfos = Singleton_CourseInfo.getInstance().courseInfoDB;
 
         System.out.println("Enter Course code: ");
         String code = myObj.nextLine();
+
+//        boolean validCourseCode = false;
+//        do{
+//
+//            boolean dup = false;
+//            for(var c : courseInfos){
+//                if(c.getCode().equals(code)){
+//                    dup = true;
+//                    break;
+//                }
+//            }
+//
+//            if(dup){
+//                System.out.println("Please enter an unique Course Code!");
+//                System.out.println("Enter Course code: ");
+//                code = myObj.nextLine();
+//            }
+//            else{
+//                validCourseCode = true;
+//            }
+//        }while(!validCourseCode);
 
         System.out.println("Enter Course name: ");
         String name = myObj.nextLine();
@@ -404,20 +452,42 @@ public class CourseManager {
         String [] setCourseInfo = new String[]{code,name,type};
         CourseInfo courseInfo = new CourseInfo(String.join(",",setCourseInfo));
 
-        System.out.println("Enter Total Number of Classes: ");
-        int classNum = myObj.nextInt();
-        myObj.nextLine();
+        boolean duplicateCourse = courseInfo.checkDuplicateCourse(courseInfo);
 
-        for(int n = 0;n < classNum;n++){
-            System.out.println("======= Add New Class =======");
-            ClassInfo classInfo = addClassInfo(myObj);
-            courseInfo.addClass(classInfo);
-            System.out.println("==============");
-            System.out.println((n+1) + ". Added a new class.");
-            System.out.println("==============");
+        if(duplicateCourse){
+            System.out.println("Error! The course cannot be added as it already existed in the system!");
         }
+        else{
+            String changedDataCourse = courseInfo.getRecordInDB(courseInfo);
 
-        Singleton_CourseInfo.getInstance().courseInfoDB.add(courseInfo);
+            System.out.println("Enter Total Number of Classes: ");
+            int classNum = myObj.nextInt();
+            myObj.nextLine();
+
+            ArrayList<String> changedDataClassArr = new ArrayList<>();
+            for(int n = 0;n < classNum;n++){
+                System.out.println("======= Add New Class =======");
+                ClassInfo classInfo = addClassInfo(myObj);
+                courseInfo.addClass(classInfo);
+                changedDataClassArr.add(classInfo.getRecordInDB(classInfo));
+                System.out.println("Added a new class successfully.");
+            }
+
+            //Singleton_CourseInfo.getInstance().courseInfoDB.add(courseInfo);
+
+            //Update 1: CourseTable
+            UpdateDB("CourseInfo","txt",changedDataCourse.trim(),"CourseTable",true);
+
+            //Update 2: ClassTable
+            String changedDataClass = String.join("\r\n",changedDataClassArr);
+            IOUtills.setFilename(name + "_Class");
+            IOUtills.setFiletype("txt");
+            IOUtills.setDirectoryName("ClassTable");
+            IOUtills.setContent(changedDataClass);
+            IOUtills.WriteFile();
+
+            System.out.println("A new course has added into database successfully.");
+        }
     }
 
     public void UpdateCourse(){
@@ -447,10 +517,11 @@ public class CourseManager {
         }while(!valid);
 
         CourseInfo selectedCourse = CourseInfo.get((choice-1));
+        String unchangedData = selectedCourse.getAllRecordInDB(selectedCourse.getCode());
         selectedCourse.printCourseInfo();
 
         myObj.nextLine();
-        String [] editOptions = new String[] {"code","name","type"};
+        String [] editOptions = new String[] {"code","name","type","class's vacancy"};
         selectedCourse.EditCourseInfoOptions(editOptions);
         choice = myObj.nextInt();
 
@@ -485,31 +556,45 @@ public class CourseManager {
 
                         int c = 0;
                         for(var classInfo : selectedCourse.getClassList()){
-//                            System.out.println("======" + classInfo.getCourseCodeReference() + ": " + classInfo.getIndexNo() + "======");
                             selectedCourse.getClassList().get(c).printClassInfo(leftAlign,c);
                             c++;
-                            //System.out.println("============\r\n");
                         }
                         System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
-                        System.out.println("1. Edit Class Info: ");
+                        System.out.println("1. Edit vacancy by class index: ");
                         System.out.println("2. Back ");
 
                         int classInput = myObj.nextInt();
                         if(classInput == 1){
-                            ClassInfo selectedClassInfo = selectedCourse.getClassList().get((classInput-1));
+                            myObj.nextLine();
+                            System.out.println("Enter class index to edit vacancy: ");
+                            String getClassIndex = myObj.nextLine();
 
-                            String [] editClassOptions = new String[] {"Class Index","Group","Day","Period","Venue","Remark","Vacancy","Waiting list"};
-                            selectedClassInfo.EditClassInfoOptions(editClassOptions);
+                            ClassInfo getClassInfo = selectedCourse.getClassList().stream().filter(x -> x.getIndexNo().equals(getClassIndex)).collect(Collectors.toList()).get(0);
 
-                            int editInfoOption = myObj.nextInt();
+                            System.out.println("Enter new vacancy: ");
+                            int newVacancy = myObj.nextInt();
+                            getClassInfo.setVacancy(newVacancy);
 
-                            //TODO: Pending edit  class info switch case
-                            int k = 0;
+                            String changedRow = getClassInfo.getIndexNo();  //Use to determine which Row in DB is changed
+
+                            String unchangeData = "";
+                            for(var n : selectedCourse.getClassList()){
+                                if(!(n.getIndexNo().equals(changedRow))){
+                                    String [] d = new String[]{n.getIndexNo(),n.getCourseCodeReference(),n.getGroupNo().toString(),n.getDay(),
+                                            n.getTime(),n.getVenue(),n.getRemark(),n.getVacancy().toString(),n.getQueue().toString()};
+                                    unchangeData += String.join(",",d) + "\r\n";
+                                }
+                            }
+
+                            String [] changedD = new String[]{getClassInfo.getIndexNo(),getClassInfo.getCourseCodeReference(),getClassInfo.getGroupNo().toString(),getClassInfo.getDay(),
+                                    getClassInfo.getTime(),getClassInfo.getVenue(),getClassInfo.getRemark(),getClassInfo.getVacancy().toString(),getClassInfo.getQueue().toString()};
+                            unchangeData += String.join(",",changedD);  //Merge the Changed Row into Unchanged Rows to save back into DB
+
+                            UpdateDB(getClassInfo.getCourseCodeReference() + "_Class","txt",unchangeData,"ClassTable",false);
                         }
                         else if(classInput == 2){
                             break;
                         }
-
                     }
                     else{
                         System.out.println("Sorry, no Class Info available.");
@@ -528,9 +613,12 @@ public class CourseManager {
             }
         }while(!terminateEditAction);
 
+        var changedData = selectedCourse.getRecordInDB(selectedCourse);
+        unchangedData += "\r\n" + changedData;
 
-        var k = 0;
+        UpdateDB("CourseInfo","txt",unchangedData.trim(),"CourseTable",false);
 
+        System.out.println("You have successfully updated the course.");
     }
 
 
@@ -615,7 +703,7 @@ public class CourseManager {
     public void PrintStudentListByIndex()
     {
         Scanner myObj = new Scanner(System.in);
-        System.out.println("===== Print Student List by Index ID =====");
+        System.out.println("===== Print Student List by Class Index =====");
 
         System.out.println("Enter an Index No: ");
         String indexNo = myObj.nextLine();
@@ -667,10 +755,11 @@ public class CourseManager {
                     IOUtills.setContent(String.join("\r\n",output));
                     IOUtills.WriteFile();
                     valid = true;
+                    System.out.println("The file is saved.");
                 }
                 else if(generateTxt.equals("N")){
                     valid = true;
-                    System.out.println("Pending message for NOT printing the report.");
+                    System.out.println("Thank you for your confirmation.");
                 }
             }while(!valid);
         }
@@ -735,10 +824,11 @@ public class CourseManager {
                     IOUtills.setContent(String.join("\r\n",output));
                     IOUtills.WriteFile();
                     valid = true;
+                    System.out.println("The file is saved.");
                 }
                 else if(generateTxt.equals("N")){
                     valid = true;
-                    System.out.println("Pending message for NOT printing the report.");
+                    System.out.println("Thank you for your confirmation.");
                 }
             }while(!valid);
         }
@@ -754,6 +844,7 @@ public class CourseManager {
         boolean isClassValid = false;
         Scanner sr = new Scanner(System.in);
 
+        //TODO: Beautify Print
         ArrayList<CourseInfo> CourseInfo = Singleton_CourseInfo.getInstance().courseInfoDB;
         for(CourseInfo Course : CourseInfo){
             System.out.println((counter + 1) + ". " + Course.getCode() + " " + Course.getName());
@@ -778,7 +869,8 @@ public class CourseManager {
 
                     if(classOption > 0 && classOption <= selectedCourse.getClassList().size()){
                         var selectedClassIndex = selectedCourse.getClassList().get(classOption-1);
-                        System.out.println("Total available vacancies: " + selectedClassIndex.getVacancy());
+                        System.out.println("There are " + (20-selectedClassIndex.getVacancy())  + " of 20 vacancies available.");
+
                         isClassValid = true;
                     }
                 }while(!isClassValid);

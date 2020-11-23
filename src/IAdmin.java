@@ -1,5 +1,5 @@
 public interface IAdmin extends IUser{
-    public void EditStudentAccessPeriod();
+    public void EditStudentAccessPeriod() throws Exception;
 
     public void AddStudent();
 

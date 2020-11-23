@@ -1,5 +1,7 @@
 
 import java.io.Console;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MyStars {
@@ -7,7 +9,7 @@ public class MyStars {
     private  static Console console;
     private final static int MAXCOURSELIMIT = 8;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
 
         //Create new user: <<user_2>>
@@ -403,7 +405,7 @@ public class MyStars {
         }while (choice < 8);
     }
 
-    private static void AdminSelection(Admin admin){
+    private static void AdminSelection(Admin admin) throws Exception {
         int choice = 0;
         int optionSize = 7;
 
@@ -414,43 +416,33 @@ public class MyStars {
 
             switch (choice){
                 case 1:
-                    admin.AddStudent();
+                    admin.AddStudent();    //Update DONE
                     break;
-//                case 2:
-//                    //admin.AddStudent();
-//                    break;
                 case 2:
-                    admin.AddCourse();
+                    admin.AddCourse();  //Update DONE
                     break;
                 case 3:
-                    admin.UpdateCourse();
+                    admin.UpdateCourse();  //Update DONE
                     break;
                 case 4:
-                    admin.EditStudentAccessPeriod();
+                    admin.EditStudentAccessPeriod(); //Update DONE
                     break;
                 case 5:
-                    admin.PrintStudentListByIndex();
+                    admin.PrintStudentListByIndex();   //No need UpdateDB
                     break;
                 case 6:
-                    admin.PrintStudentListByCourse();
+                    admin.PrintStudentListByCourse(); //No need UpdateDB
                     break;
                 case 7:
-                    admin.CheckCourseVacancy();
+                    admin.CheckCourseVacancy(); //No need UpdateDB
                     break;
                 case 8:
-                    //Sign out
+                    System.out.println("See you again!");
+                    System.exit(0);
                     break;
             }
 
         }while(choice != -1);
-
-
-        //admin.EditStudentAccessPeriod(); //Task 1 DONE
-        //admin.AddStudent();  //Task  2 DONE
-        //admin.AddCourse();  Task 3
-        //admin.CheckCourseVacancy(); //Task 4 DONE
-        //admin.PrintStudentListByIndex("00318");  //Task 5 DONE
-        //admin.PrintStudentListByCourse("CZ2003"); //Task 6 DONE
     }
 
     private static void InitCourseDB()
@@ -474,7 +466,10 @@ public class MyStars {
                     //<editor-fold desc="read class info">
                     String class_filename = course.getCode() + "_Class.txt";
                     String class_filepath = System.getProperty("user.dir") + "/ClassTable/" + class_filename;
-                    IOUtills.ReadFile(class_filepath);
+
+                    if(Files.exists(Path.of(class_filepath))){
+                        IOUtills.ReadFile(class_filepath);
+                    }
 
                     ArrayList<String> classInfoDB =  IOUtills.getFileInput();
 

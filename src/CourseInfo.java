@@ -1,4 +1,6 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class CourseInfo
 {
@@ -75,9 +77,40 @@ public class CourseInfo
         for(int k = 0; k < editOptions.length;k++){
             System.out.println((k+1) + ". Edit " +  editOptions[k]);
         }
-        System.out.println("4. View the Class Info.");
         System.out.println("============");
         System.out.println("Enter your input: ");
     }
+
     public void createClassArrayList() {this.classArrayList = new ArrayList<>();}
+
+    public String getAllRecordInDB(String skipByColumnName){
+        ArrayList<String> d = new ArrayList<String>();
+        for(var i :  Singleton_CourseInfo.getInstance().courseInfoDB){
+            if(!(i.getCode().equals(skipByColumnName))){
+                d.add(getRecordInDB(i));
+            }
+        }
+        return String.join("\r\n",d);
+    }
+
+    public String getRecordInDB(CourseInfo data){
+        String [] d = new String[] {data.getCode(),data.getName(),data.getType()};
+        return String.join(",",d);
+    }
+
+    public boolean checkDuplicateCourse(CourseInfo newCourse){
+        boolean output = true;
+
+        var courses = Singleton_CourseInfo.getInstance().courseInfoDB;
+        var getCourseInfo = courses.stream().filter(x -> x.getCode().equals(newCourse.getCode())
+                && x.getName().equals(newCourse.getName()) && x.getType().equals(newCourse.getType()))
+                .collect(Collectors.toList());
+
+        if(getCourseInfo.size() == 0){
+            output = false;
+        }
+
+        return output;
+    }
+
 }
