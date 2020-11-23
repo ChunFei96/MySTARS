@@ -66,8 +66,8 @@ public class Account {
         String mySecurePassword = PasswordUtils.generateSecurePassword(getPassword(), salt);
 
         // Print out protected password
-        System.out.println("My secure password: " + mySecurePassword);
-        System.out.println("Salt value: " + salt);
+//        System.out.println("My secure password: " + mySecurePassword);
+//        System.out.println("Salt value: " + salt);
 
         //Content format: <username>,<password>,<salt>,<securePassword>,<role>
         String content = getUsername() + "," + getPassword() + "," + salt + "," + mySecurePassword + "," + getUserRole() ;
@@ -83,7 +83,7 @@ public class Account {
         ArrayList<String> data = IOUtills.getFileInput();
         content = String.join("\r\n",data) + "\r\n" + content;
 
-        new IOUtills("chunfei","txt",content,"UserTable");
+        new IOUtills("user","txt",content,"UserTable");
         IOUtills.WriteFile();
     }
 

@@ -308,8 +308,8 @@ public class CourseManager {
 
     public void AddStudent()
     {
-        String filepath = System.getProperty("user.dir") + "/StudentProfile";
-        IOUtills.ReadFile(filepath + "/user.txt");
+        String filepath = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
+        IOUtills.ReadFile(filepath);
 
         ArrayList<String> studentList = IOUtills.getFileInput();
 
@@ -318,27 +318,21 @@ public class CourseManager {
 
         System.out.println("Enter name: ");
         String name = sr.nextLine();
-        System.out.println("Student name: " + name);
 
         System.out.println("Enter nationality: ");
         String nationality = sr.nextLine();
-        System.out.println("Student nationality: " + nationality);
 
         System.out.println("Enter email: ");
         String email = sr.nextLine();
-        System.out.println("Student email: " + email);
 
         System.out.println("Enter contactNo: ");
         String contactNo = sr.nextLine();
-        System.out.println("Student contactNo: " + contactNo);
 
         System.out.println("Enter sex (M/F): ");
         String sex = sr.nextLine();
-        System.out.println("Student sex: " + sex);
 
         System.out.println("Enter matricNo: ");
         String matricNo = sr.nextLine();
-        System.out.println("Student matricNo: " + matricNo);
         //</editor-fold>
 
         String username = name;  //Set username as name
@@ -358,6 +352,17 @@ public class CourseManager {
                 matricNo,getTodayDate,accessPeriodEnd);
 
         String formatStudent = newStudent.ToStr();
+
+        //Update Table 1
+        UpdateDB("StudentProfile","txt",formatStudent,"StudentProfile",true);
+
+
+        //Update Table 2
+        Account user_2 = new Account(username,password);
+        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
+        user_2.addAccount();
+
+        /*
         formatStudent = String.join("\r\n",studentList) + "\r\n" + formatStudent;
 
         //<editor-fold desc="<Add into StudentProfile>">
@@ -370,6 +375,8 @@ public class CourseManager {
         user_2.setUserRole(EnumHelper.UserRole.STUDENT);
         user_2.addAccount();
         //</editor-fold>
+
+         */
     }
 
     public void AddCourse()
@@ -430,10 +437,94 @@ public class CourseManager {
 
         }while(!valid);
 
-        CourseInfo courseInfo = CourseInfo.get((choice+1));
+        CourseInfo selectedCourse = CourseInfo.get((choice-1));
+        selectedCourse.printCourseInfo();
+
+        myObj.nextLine();
+        String [] editOptions = new String[] {"code","name","type"};
+        selectedCourse.EditCourseInfoOptions(editOptions);
+        choice = myObj.nextInt();
+
+        boolean terminateEditAction = false;
+
+        do{
+            switch(choice){
+                case 1:
+                    System.out.println("Enter new Course Code: ");
+                    myObj.nextLine();
+                    String CourseCode_N = myObj.nextLine();
+                    selectedCourse.setCode(CourseCode_N);
+                    break;
+                case 2:
+                    System.out.println("Enter new Course name: ");
+                    myObj.nextLine();
+                    String CourseName_N = myObj.nextLine();
+                    selectedCourse.setName(CourseName_N);
+                    break;
+                case 3:
+                    System.out.println("Enter new Course type: ");
+                    myObj.nextLine();
+                    String CourseType_N = myObj.nextLine();
+                    selectedCourse.setType(CourseType_N);
+                    break;
+                case 4:
+                    if(selectedCourse.getClassList().size() > 0){
+                        String leftAlign = "| %-11s | %-7s |%-9s | %-12s | %-10s | %-14s | %-8s |%-14s |%n";
+                        System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
+                        System.out.format("| Class Index |  Group  |    Day   |    Period    |    Venue   |     Remark     |  Vacancy | Waiting list  |%n");
+                        System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
+
+                        int c = 0;
+                        for(var classInfo : selectedCourse.getClassList()){
+//                            System.out.println("======" + classInfo.getCourseCodeReference() + ": " + classInfo.getIndexNo() + "======");
+                            selectedCourse.getClassList().get(c).printClassInfo(leftAlign,c);
+                            c++;
+                            //System.out.println("============\r\n");
+                        }
+                        System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
+                        System.out.println("1. Edit Class Info: ");
+                        System.out.println("2. Back ");
+
+                        int classInput = myObj.nextInt();
+                        if(classInput == 1){
+                            ClassInfo selectedClassInfo = selectedCourse.getClassList().get((classInput-1));
+
+                            String [] editClassOptions = new String[] {"Class Index","Group","Day","Period","Venue","Remark","Vacancy","Waiting list"};
+                            selectedClassInfo.EditClassInfoOptions(editClassOptions);
+
+                            int editInfoOption = myObj.nextInt();
+
+                            //TODO: Pending edit  class info switch case
+                            int k = 0;
+                        }
+                        else if(classInput == 2){
+                            break;
+                        }
+
+                    }
+                    else{
+                        System.out.println("Sorry, no Class Info available.");
+                    }
+                    break;
+            }
+
+            System.out.println("Do you want to continue editing? (Y/N)");
+            String decision = myObj.nextLine();
+            if(decision.toUpperCase().equals("N")){
+                terminateEditAction = true;
+            }
+            else{
+                selectedCourse.EditCourseInfoOptions(editOptions);
+                choice = myObj.nextInt();
+            }
+        }while(!terminateEditAction);
+
+
         var k = 0;
 
     }
+
+
 
     private ClassInfo addClassInfo(Scanner myObj){
         System.out.println("Enter Class Index No: ");

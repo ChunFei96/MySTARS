@@ -9,14 +9,6 @@ public class CourseInfo
 
     private ArrayList<ClassInfo> classArrayList;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     // constructor for add course
     public CourseInfo(CourseInfo courseInfo)
     {
@@ -47,6 +39,20 @@ public class CourseInfo
 
     public String getCode() {return code;}
 
+    public String getType() { return type; }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public void addClass(ClassInfo classInfo)
     {
         this.classArrayList.add(classInfo);
@@ -57,5 +63,21 @@ public class CourseInfo
         return this.classArrayList;
     }
 
+    public void printCourseInfo(){
+        System.out.println("======= Display Course Info =======");
+        System.out.println("Course code: " + getCode());
+        System.out.println("Course name: " + getName());
+        System.out.println("Course type: " + getType());
+    }
+
+    public void EditCourseInfoOptions(String [] editOptions){
+        System.out.println("============");
+        for(int k = 0; k < editOptions.length;k++){
+            System.out.println((k+1) + ". Edit " +  editOptions[k]);
+        }
+        System.out.println("4. View the Class Info.");
+        System.out.println("============");
+        System.out.println("Enter your input: ");
+    }
     public void createClassArrayList() {this.classArrayList = new ArrayList<>();}
 }

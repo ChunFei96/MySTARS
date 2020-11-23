@@ -102,4 +102,19 @@ public class ClassInfo {
     public void setQueue(Integer queue) {
         this.queue = queue;
     }
+
+    public void printClassInfo(String leftAlign,int i){
+        System.out.format(leftAlign, i+1 + ": " + getIndexNo(),getGroupNo(),getDay(),getTime(),getVenue(),
+                getRemark(),getVacancy(),getQueue());
+    }
+
+    public void EditClassInfoOptions(String [] editOptions){
+        System.out.println("============");
+        for(int k = 0; k < editOptions.length;k++){
+            System.out.println((k+1) + ". Edit " +  editOptions[k]);
+        }
+        System.out.println("9. Back");
+        System.out.println("============");
+        System.out.println("Enter your input: ");
+    }
 }

@@ -25,8 +25,8 @@ public class MyStars {
         //String password = "[C@368239c8";
 
         //Test Admin Acc
-        //String username = "TS";
-        //String password = "[C@244038d0";
+        String username = "TS";
+        String password = "[C@244038d0";
 
         //Run by Console
         mailHelper = new MailHelper();
@@ -77,7 +77,7 @@ public class MyStars {
         System.out.println("3: Check/Print Courses Registered");
         System.out.println("4: Check Vacancies Available");
         System.out.println("5: Change Index Number of Course");
-        System.out.println("6: Swop Index Number with Another Student");
+        System.out.println("6: Swap Index Number with Another Student");
         System.out.println("7: Log out");
     }
 
