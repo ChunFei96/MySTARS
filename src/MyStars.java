@@ -64,7 +64,7 @@ public class MyStars {
             }
             else if(login.getUser().getUserRole() == EnumHelper.UserRole.ADMIN){
                 Admin admin = login.getAdminProfile();
-                AdminSelection();
+                AdminSelection(admin);
             }
             else
                 System.out.println("Invalid Username or Password! Please try again.");
@@ -88,14 +88,14 @@ public class MyStars {
     private static void AdminMenu(){
         System.out.println("====== Welcome Admin ======");
         System.out.println("1. Add Student");
-        System.out.println("2. Edit Student");
-        System.out.println("3. Add Course");
-        System.out.println("4. Update Course");
-        System.out.println("5. Edit Student Access");
-        System.out.println("6. Print StudentList By Index Number");
-        System.out.println("7. Print StudentList By Course");
-        System.out.println("8. Retrieve Class Vacancy");
-        System.out.println("9. Logout");
+//        System.out.println("2. Edit Student");
+        System.out.println("2. Add Course");
+        System.out.println("3. Update Course");
+        System.out.println("4. Edit Student Access");
+        System.out.println("5. Print StudentList By Index Number");
+        System.out.println("6. Print StudentList By Course");
+        System.out.println("7. Retrieve Class Vacancy");
+        System.out.println("8. Logout");
         System.out.println("=====================");
     }
 
@@ -403,26 +403,47 @@ public class MyStars {
         }while (choice < 8);
     }
 
-    private static void AdminSelection(){
+    private static void AdminSelection(Admin admin){
         int choice = 0;
-        int optionSize = 6;
+        int optionSize = 7;
 
-        AdminMenu();
-
-        /*
         do{
+            AdminMenu();
+            Scanner sc = new Scanner(System.in);
+            choice = sc.nextInt();
+
             switch (choice){
                 case 1:
+                    admin.AddStudent();
                     break;
+//                case 2:
+//                    //admin.AddStudent();
+//                    break;
                 case 2:
+                    admin.AddCourse();
                     break;
                 case 3:
+                    admin.UpdateCourse();
+                    break;
+                case 4:
+                    admin.EditStudentAccessPeriod();
+                    break;
+                case 5:
+                    admin.PrintStudentListByIndex();
+                    break;
+                case 6:
+                    admin.PrintStudentListByCourse();
+                    break;
+                case 7:
+                    admin.CheckCourseVacancy();
+                    break;
+                case 8:
+                    //Sign out
                     break;
             }
 
         }while(choice != -1);
-        
-         */
+
 
         //admin.EditStudentAccessPeriod(); //Task 1 DONE
         //admin.AddStudent();  //Task  2 DONE
