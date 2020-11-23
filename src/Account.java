@@ -74,7 +74,7 @@ public class Account {
 
         //new IOUtills(getUsername(),"txt",content,"UserTable");
 
-        String path = System.getProperty("user.dir") + "/UserTable";
+        String path = "C:/Users/USER/Documents/MySTARS" + "/UserTable";
         if(Files.notExists(Path.of(path))){
             IOUtills.createDirectory("UserTable");
         }
@@ -89,7 +89,7 @@ public class Account {
 
     public Login getAccountInfo(String username){
 
-        String inputFile = System.getProperty("user.dir") + "/UserTable/user.txt";
+        String inputFile = "C:/Users/USER/Documents/MySTARS" + "/UserTable/user.txt";
 
         //Check against UserTable to find user data
         if(Files.notExists(Path.of(inputFile))){
@@ -229,7 +229,7 @@ public class Account {
 
         boolean del = true;
         if(del){
-            String inputFile = System.getProperty("user.dir") + "/AdminProfile/chunfei.txt";
+            String inputFile = "C:/Users/USER/Documents/MySTARS" + "/AdminProfile/chunfei.txt";
 
             //Check against UserTable to find user data
             if(Files.notExists(Path.of(inputFile))){

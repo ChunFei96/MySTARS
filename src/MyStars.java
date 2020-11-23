@@ -1,11 +1,13 @@
 
 import java.io.Console;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MyStars {
 
     private  static Console console;
     private final static int MAXCOURSELIMIT = 8;
+    private static MailHelper mailHelper;
 
     public static void main(String[] args) {
 
@@ -15,20 +17,19 @@ public class MyStars {
 //        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
 //        user_2.addAccount();
 
-
         //Test Student Acc
         //String username = "chunfei";
         //String password = "abc123";
 
-        String username = "Mike";
-        String password = "[C@368239c8";
+        //String username = "Mike";
+        //String password = "[C@368239c8";
 
         //Test Admin Acc
         //String username = "TS";
         //String password = "[C@244038d0";
 
         //Run by Console
-        /*
+        mailHelper = new MailHelper();
         console = System.console();
 
         if (console == null) {
@@ -37,11 +38,9 @@ public class MyStars {
         }
 
         String username = console.readLine("Enter your username: ");
-        System.out.println("Welcome " + username);
 
         char[] password = console.readPassword("Enter your password: ");
         //console.printf("Password entered was: %s%n", new String(passwordArray));
-        */
 
 
 
@@ -66,10 +65,7 @@ public class MyStars {
                 Admin admin = login.getAdminProfile();
                 AdminSelection(admin);
             }
-            else
-                System.out.println("Invalid Username or Password! Please try again.");
         }
-
     }
 
     private static void StudentMenu()
@@ -290,7 +286,24 @@ public class MyStars {
                     CourseInfo selectedCourse = new CourseInfo(singleton_courseInfo.courseInfoDB.get(courseSelection-1));
                     selectedCourse.addClass(singleton_courseInfo.courseInfoDB.get(courseSelection-1).getClassList().get(classSelection-1));
 
-                    student.AddCourse(selectedCourse,false);
+                    Boolean isClash1 = false;
+                    // if the added course clash with another class index day/time, do not add.
+                    if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
+                    {
+                        for(int y =0 ; y < student.getCourseInfoList().size(); y++)
+                        {
+                            if(student.getCourseInfoList().get(y).getClassList().get(0).getDay().equals(selectedCourse.getClassList().get(0).getDay()) &&
+                                    student.getCourseInfoList().get(y).getClassList().get(0).getTime().equals(selectedCourse.getClassList().get(0).getTime()))
+                            {
+                                System.out.println("Alert! There is a day/ time clash with your registered course index "+ student.getCourseInfoList().get(y).getClassList().get(0).getIndexNo() + " . Please choose another course index.");
+                                isClash1=true;
+                                break;
+                            }
+
+                        }
+                    }
+                    if(!isClash1)
+                        student.AddCourse(selectedCourse,false);
                     break;
                 case 2:
                     StudentCourseMenu(student.getCourseInfoList(), student.getName());
@@ -332,12 +345,30 @@ public class MyStars {
                             CourseInfo selectedCourse5 = new CourseInfo(singleton_courseInfo.courseInfoDB.get(i));
                             selectedCourse5.addClass(singleton_courseInfo.courseInfoDB.get(i).getClassList().get(classSelection5-1));
 
-                            System.out.println("You have successfully changed from the course index " + student.getCourseInfoList().get(dropSelection5-1).getClassList().get(0).getIndexNo() + " to the course index " + selectedCourse5.getClassList().get(0).getIndexNo());
+                            Boolean isClash = false;
+                            // if the added course clash with another class index day/time, do not add.
+                            if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
+                            {
+                                for(int y =0 ; y < student.getCourseInfoList().size(); y++)
+                                {
+                                    if(student.getCourseInfoList().get(y).getClassList().get(0).getDay().equals(selectedCourse5.getClassList().get(0).getDay()) &&
+                                            student.getCourseInfoList().get(y).getClassList().get(0).getTime().equals(selectedCourse5.getClassList().get(0).getTime()))
+                                    {
+                                        System.out.println("Alert! There is a day/ time clash with your registered course index "+ student.getCourseInfoList().get(y).getClassList().get(0).getIndexNo() + " . Please choose another course index.");
+                                        isClash = true;
+                                        break;
+                                    }
 
-                            student.AddCourse(selectedCourse5,false);
+                                }
+                            }
 
-                            student.DropCourse(student.getCourseInfoList().get(dropSelection5-1),false);
+                            if(!isClash) {
+                                System.out.println("You have successfully changed from the course index " + student.getCourseInfoList().get(dropSelection5 - 1).getClassList().get(0).getIndexNo() + " to the course index " + selectedCourse5.getClassList().get(0).getIndexNo());
 
+                                student.AddCourse(selectedCourse5, false);
+
+                                student.DropCourse(student.getCourseInfoList().get(dropSelection5 - 1), false);
+                            }
                             break;
                         }
                     }
@@ -353,12 +384,12 @@ public class MyStars {
                     CourseInfo courseInfo6 = student.getCourseInfoList().get(dropSelection6-1);
 
                     System.out.println("Please allow student 2 to verify his account : ");
-                    System.out.println("Student 2 Username: ");
                     sc.nextLine();
-                    String username = sc.nextLine();
 
-                    System.out.println("Student 2 Password: ");
-                    String password = sc.nextLine();
+                    String username = console.readLine("Student 2 Username: ");
+
+                    char[] password = console.readPassword("Student 2 Password:");
+
                     Login login = new Login(username,new String(password));
                     if(login.validateLogin()) {
                         Student student2 = login.getStudentProfile();
@@ -377,11 +408,28 @@ public class MyStars {
                                 {
                                     System.out.println("You have successfully changed from the course index "+ courseInfo6.getClassList().get(0).getIndexNo() + " to the course index "+ student2.getCourseInfoList().get(i).getClassList().get(0).getIndexNo()  +
                                                         " with Student " + student2.getName());
+
+                                    System.out.println("sending email...");
+                                    mailHelper.setRecipientEmail(student.getEmail());
+                                    mailHelper.setMessage("You have successfully swap to course index " + student2.getCourseInfoList().get(i).getClassList().get(0).getIndexNo());
+                                    mailHelper.setEmailSubject("Successfully swap to course index " + student2.getCourseInfoList().get(i).getClassList().get(0).getIndexNo());
+                                    mailHelper.SendEmail();
+
+                                    mailHelper.setRecipientEmail(student2.getEmail());
+                                    mailHelper.setMessage("You have successfully swap to course index " + courseInfo6.getClassList().get(0).getIndexNo());
+                                    mailHelper.setEmailSubject("Successfully swap to course index " + courseInfo6.getClassList().get(0).getIndexNo());
+                                    mailHelper.SendEmail();
+                                    System.out.println("Email notification sent!");
+
                                     student.AddCourse(student2.getCourseInfoList().get(i),true);
                                     student2.AddCourse(courseInfo6,true);
 
                                     student.DropCourse(courseInfo6,true);
                                     student2.DropCourse(student2.getCourseInfoList().get(i),true);
+
+
+
+
                                     break;
                                 }
                                 else if(decision6==2)
@@ -458,7 +506,8 @@ public class MyStars {
         Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
 
         //<editor-fold desc="read course info">
-        String filepath = System.getProperty("user.dir") + "/CourseTable/" + "/CourseInfo.txt";
+
+        String filepath = "C:/Users/USER/Documents/MySTARS" + "/CourseTable/" + "/CourseInfo.txt";
         IOUtills.ReadFile(filepath);
 
         ArrayList<String> tempcourseInfoDB =  IOUtills.getFileInput();
@@ -473,7 +522,7 @@ public class MyStars {
 
                     //<editor-fold desc="read class info">
                     String class_filename = course.getCode() + "_Class.txt";
-                    String class_filepath = System.getProperty("user.dir") + "/ClassTable/" + class_filename;
+                    String class_filepath = "C:/Users/USER/Documents/MySTARS" + "/ClassTable/" + class_filename;
                     IOUtills.ReadFile(class_filepath);
 
                     ArrayList<String> classInfoDB =  IOUtills.getFileInput();
@@ -496,7 +545,7 @@ public class MyStars {
         Singleton_StudentCourse singleton_studentCourse = Singleton_StudentCourse.getInstance();
 
         //<editor-fold desc="read course info">
-        String filepath = System.getProperty("user.dir") + "/StudentCourseTable/StudentCourse.txt";
+        String filepath = "C:/Users/USER/Documents/MySTARS" + "/StudentCourseTable/StudentCourse.txt";
         IOUtills.ReadFile(filepath);
 
         ArrayList<String> tempstudentCourseDB =  IOUtills.getFileInput();
@@ -517,7 +566,7 @@ public class MyStars {
         Singleton_UserTable singleton_userTable = Singleton_UserTable.getInstance();
 
         //<editor-fold desc="read UserTable info">
-        String filepath = System.getProperty("user.dir") + "/UserTable/" + "/user.txt";
+        String filepath = "C:/Users/USER/Documents/MySTARS" + "/UserTable/" + "/user.txt";
         IOUtills.ReadFile(filepath);
 
         ArrayList<String> temp =  IOUtills.getFileInput();
@@ -545,7 +594,7 @@ public class MyStars {
         Singleton_StudentProfile singleton_studentProfile = Singleton_StudentProfile.getInstance();
 
         //<editor-fold desc="read StudentProfile info">
-        String filepath = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
+        String filepath = "C:/Users/USER/Documents/MySTARS" + "/StudentProfile/StudentProfile.txt";
         IOUtills.ReadFile(filepath);
 
         ArrayList<String> temp =  IOUtills.getFileInput();

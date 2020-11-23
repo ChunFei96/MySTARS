@@ -53,7 +53,7 @@ public class IOUtills {
     }
 
     public static void createDirectory(String newFolderName){
-        File file = new File(System.getProperty("user.dir") + "/" + newFolderName);
+        File file = new File("C:/Users/USER/Documents/MySTARS" + "/" + newFolderName);
 
         // true if the directory was created, false otherwise
         if (file.mkdirs()) {
@@ -97,7 +97,7 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
-                _filepath = getDirectoryName() + File.separator + _filepath ;
+                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
             }
 
             //File.separator => back or forward slash
@@ -117,7 +117,7 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
-                _filepath = getDirectoryName() + File.separator + _filepath ;
+                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
             }
 
             //File.separator => back or forward slash

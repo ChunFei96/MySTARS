@@ -58,10 +58,6 @@ public class Student extends User implements IStudent{
         courseManager.RegisteredCourses(this);
     }
 
-//    public CourseInfo ShowCourses(int indexNo)
-//    {
-//        return courseManager.RegisteredCourses(this, indexNo);
-//    }
 
     public void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass)
     {
