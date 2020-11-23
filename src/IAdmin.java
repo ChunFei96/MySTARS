@@ -3,9 +3,9 @@ public interface IAdmin extends IUser{
 
     public void AddStudent();
 
-    public void AddCourse(CourseInfo course);
+    public void AddCourse();
 
-    public void PrintStudentListByIndex(String indexNo);
+    public void PrintStudentListByIndex();
 
-    public void PrintStudentListByCourse(String courseName);
+    public void PrintStudentListByCourse();
 }
