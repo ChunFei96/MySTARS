@@ -9,6 +9,13 @@ public class CourseInfo
 
     private ArrayList<ClassInfo> classArrayList;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     // constructor for add course
     public CourseInfo(CourseInfo courseInfo)
@@ -49,4 +56,6 @@ public class CourseInfo
     {
         return this.classArrayList;
     }
+
+    public void createClassArrayList() {this.classArrayList = new ArrayList<>();}
 }

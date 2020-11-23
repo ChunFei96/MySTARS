@@ -104,7 +104,7 @@ public class IOUtills {
             FileWriter myWriter = new FileWriter(_filepath);
             myWriter.write(getContent());
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
+            //System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -124,7 +124,7 @@ public class IOUtills {
             FileWriter myWriter = new FileWriter(_filepath,append);
             myWriter.write(getContent() + "\n");
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
+            //System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

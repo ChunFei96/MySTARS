@@ -108,6 +108,7 @@ public class Login {
                 for(Student stu : Singleton_StudentProfile.getInstance().studentProfileDB){
                     if(stu.getUsername().equals(getMyUsername())){
                         if(!checkAccessPeriod(stu.getAccessPeriodEnd())){
+                            System.out.println("You are not allowed access after the defined period!");
                             return false;
                         }
                         break;

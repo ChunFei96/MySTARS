@@ -43,14 +43,14 @@ public class Student extends User implements IStudent{
         return this.courseInfoList;
     }
 
-    public void AddCourse(CourseInfo courseInfo)
+    public void AddCourse(CourseInfo courseInfo, Boolean isSwapIndex)
     {
-        courseManager.AddCourse(this, courseInfo);
+        courseManager.AddCourse(this, courseInfo, isSwapIndex);
     }
 
-    public void DropCourse(CourseInfo courseInfo)
+    public void DropCourse(CourseInfo courseInfo, Boolean isSwapIndex)
     {
-        courseManager.DropCourse(this, courseInfo);
+        courseManager.DropCourse(this, courseInfo, isSwapIndex);
     }
 
     public void RegisteredCourses()
