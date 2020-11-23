@@ -95,7 +95,7 @@ public class MailHelper
             msg.setSentDate(new Date());
             Transport.send(msg);
 
-            System.out.println(formattedDate + " - Message sent.");
+            //System.out.println(formattedDate + " - Message sent.");
         }catch (MessagingException e){
             System.out.println("Error: " + e);
         }

@@ -66,8 +66,8 @@ public class Account {
         String mySecurePassword = PasswordUtils.generateSecurePassword(getPassword(), salt);
 
         // Print out protected password
-        System.out.println("My secure password: " + mySecurePassword);
-        System.out.println("Salt value: " + salt);
+//        System.out.println("My secure password: " + mySecurePassword);
+//        System.out.println("Salt value: " + salt);
 
         //Content format: <username>,<password>,<salt>,<securePassword>,<role>
         String content = getUsername() + "," + getPassword() + "," + salt + "," + mySecurePassword + "," + getUserRole() ;
@@ -83,7 +83,7 @@ public class Account {
         ArrayList<String> data = IOUtills.getFileInput();
         content = String.join("\r\n",data) + "\r\n" + content;
 
-        new IOUtills("chunfei","txt",content,"UserTable");
+        new IOUtills("user","txt",content,"UserTable");
         IOUtills.WriteFile();
     }
 
@@ -120,26 +120,108 @@ public class Account {
     }
 
     public Student getStudentProfile(){
-        String inputFile = System.getProperty("user.dir") + "/StudentProfile/" + getUsername() +  ".txt";
+        Singleton_StudentProfile studentProfile = Singleton_StudentProfile.getInstance();
+        Student student = null;
 
-        //Check against UserTable to find user data
-        if(Files.notExists(Path.of(inputFile))){
-            //System.out.println("Please try login again!");
-            return null;
+        if(studentProfile.studentProfileDB != null && studentProfile.studentProfileDB.size() > 0)
+        {
+            for(int i=0; i < studentProfile.studentProfileDB.size(); i++)
+            {
+                if(studentProfile.studentProfileDB.get(i).getUsername().equals(this.getUsername()) &&
+                        studentProfile.studentProfileDB.get(i).getPassword().equals(this.getPassword()))
+                {
+                    student = studentProfile.studentProfileDB.get(i);
+                }
+            }
         }
 
-        IOUtills.ReadFile(inputFile);
-        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
+//        String inputFile = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
+//
+//        //Check against UserTable to find user data
+//        if(Files.notExists(Path.of(inputFile))){
+//            //System.out.println("Please try login again!");
+//            return null;
+//        }
+//
+//        IOUtills.ReadFile(inputFile);
+//        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
+//
+//        //TODO not always get the first one
+//        String[] userData = output.get(0).split(",");
 
-        String[] userData = output.get(0).split(",");
-
-        if(userData != null){
-            Student student = new Student(userData[0], userData[1], userData[2], userData[3],
-                    userData[4], userData[5], EnumHelper.UserRole.valueOf(userData[6]),
-                    EnumHelper.Gender.valueOf(userData[7]), userData[8],userData[9],userData[10]);
-            return student;
-        }
-        return null;
+//        if(student != null){
+////            Student student = new Student(userData[0], userData[1], userData[2], userData[3],
+////                    userData[4], userData[5], EnumHelper.UserRole.valueOf(userData[6]),
+////                    EnumHelper.Gender.valueOf(userData[7]), userData[8],userData[9],userData[10]);
+//
+//            // retrieve all the registered course
+//            Singleton_StudentCourse studentCourse = Singleton_StudentCourse.getInstance();
+//            Singleton_CourseInfo courseInfo = Singleton_CourseInfo.getInstance();
+//
+//            ArrayList<StudentCourse> studentCourseArrayList = new ArrayList<>();
+//
+//            for(int i=0; i < studentCourse.studentCourseDB.size(); i++)
+//            {
+//                if(studentCourse.studentCourseDB.get(i).getStudentMatricNo().toUpperCase().equals(student.getMatricNo().toUpperCase()))
+//                {
+//                    studentCourseArrayList.add(studentCourse.studentCourseDB.get(i));
+//                }
+//            }
+//
+//            ArrayList<CourseInfo> courseInfoArrayList = new ArrayList<>();
+//
+//            for(int j=0; j < courseInfo.courseInfoDB.size(); j++)
+//            {
+//                for(int k=0; k < studentCourseArrayList.size(); k++)
+//                {
+//                    if(courseInfo.courseInfoDB.get(j).getCode().equals(studentCourseArrayList.get(k).getCourseCode()))
+//                    {
+//                        CourseInfo courseInfo1 = new CourseInfo(courseInfo.courseInfoDB.get(j));
+//
+//
+//                        for(int z=0; z< courseInfo.courseInfoDB.get(j).getClassList().size() ; z++)
+//                        {
+//                            if(courseInfo.courseInfoDB.get(j).getClassList().get(z).getIndexNo().equals(studentCourseArrayList.get(k).getClassIndex()))
+//                            {
+//                                courseInfo1.addClass(courseInfo.courseInfoDB.get(j).getClassList().get(z));
+//                            }
+//                        }
+//                        student.addCourse(courseInfo1);
+//                    }
+//                }
+//            }
+//
+////            //remove not related class
+////            for(int z=0; z < student.getCourseInfoList().size(); z++)
+////            {
+////                for(int a = 0; a < student.getCourseInfoList().get(z).getClassList().size(); )
+////                {
+////                    for(int b=0; b < studentCourseArrayList.size(); b++)
+////                    {
+////                        if(student.getCourseInfoList().get(z).getCode().equals(studentCourseArrayList.get(b).getCourseCode()) &&
+////                                !student.getCourseInfoList().get(z).getClassList().get(a).getIndexNo().equals(studentCourseArrayList.get(b).getClassIndex()))
+////                        {
+////                            student.getCourseInfoList().get(z).getClassList().remove(student.getCourseInfoList().get(z).getClassList().get(a));
+////                        }
+////                        else
+////                            a++;
+////                    }
+////                }
+////
+////            }
+//
+////            for(int z=0; z < courseInfo.courseInfoDB.get(j).getClassList().size(); z++)
+////            {
+////                if(courseInfo.courseInfoDB.get(j).getClassList().get(z).getIndexNo().equals(studentCourseArrayList.get(k).getClassIndex()))
+////                {
+////                    courseInfo1.addClass(courseInfo.courseInfoDB.get(j).getClassList().get(z));
+////                }
+////            }
+//
+//
+//            return student;
+//        }
+        return student;
     }
 
     public Admin getAdminProfile(){

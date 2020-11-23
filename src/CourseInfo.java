@@ -9,7 +9,6 @@ public class CourseInfo
 
     private ArrayList<ClassInfo> classArrayList;
 
-
     // constructor for add course
     public CourseInfo(CourseInfo courseInfo)
     {
@@ -40,9 +39,7 @@ public class CourseInfo
 
     public String getCode() {return code;}
 
-    public String getType() {
-        return type;
-    }
+    public String getType() { return type; }
 
     public void setCode(String code) {
         this.code = code;
@@ -82,4 +79,5 @@ public class CourseInfo
         System.out.println("============");
         System.out.println("Enter your input: ");
     }
+    public void createClassArrayList() {this.classArrayList = new ArrayList<>();}
 }

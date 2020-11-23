@@ -1,9 +1,9 @@
 
 
 public interface IStudent extends IUser {
-    void AddCourse(CourseInfo courseInfo);
+    void AddCourse(CourseInfo courseInfo, Boolean isSwapIndex);
 
-    void DropCourse(CourseInfo courseInfo);
+    void DropCourse(CourseInfo courseInfo, Boolean isSwapIndex);
 
     void RegisteredCourses();
 
