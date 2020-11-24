@@ -1,15 +1,22 @@
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
+
 
 /**
  * Control Class
+ * Student and Admin class use this course system to perform all the functionality
+ * @author Lee Chun Fei & Tan Wen Jun
+ * @version 1.0
+ * @since 2020-11-16
  */
 public class CourseManager{
 
@@ -21,6 +28,14 @@ public class CourseManager{
     }
 
     //<editor-fold desc="<Student>">
+
+    /**
+     * Allow student to register course with vacancy available
+     * Student will be assigned to wait list with email notification queue number while no vacancy available
+     * @param student Student that add the course
+     * @param courseInfo The course selected by student
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
     public void AddCourse(Student student, CourseInfo courseInfo, Boolean isSwapIndex)
     {
         Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
@@ -94,6 +109,13 @@ public class CourseManager{
 
     }
 
+    /**
+     * Allow student to drop their registered course
+     * Auto register for student who queue the first of the course that dropped by another student
+     * @param student Student that drop the course
+     * @param courseInfo The course dropped by student
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
     public void DropCourse(Student student, CourseInfo courseInfo, Boolean isSwapIndex)
     {
         Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
@@ -116,8 +138,6 @@ public class CourseManager{
                     content += singleton_studentCourse.studentCourseDB.get(i).getStudentMatricNo() + "," + singleton_studentCourse.studentCourseDB.get(i).getCourseCode() + "," + singleton_studentCourse.studentCourseDB.get(i).getClassIndex() + "\n" ;
                     i++;
                 }
-
-
             }
             UpdateDB("StudentCourse","txt",content,"StudentCourseTable",false);
         }
@@ -228,10 +248,14 @@ public class CourseManager{
 
     }
 
+    /**
+     * Allow student to print their registered courses
+     * @param student Student that print the registered courses
+     */
     public void RegisteredCourses(Student student)
     {
         String menuTitle = student.getName() + " registered courses";
-        System.out.println("\n================================================================== " +  menuTitle + " =========================================================================================\n");
+        System.out.println("\n================================================================== " +  menuTitle + " =========================================================================================");
         if(student.getCourseInfoList() != null && student.getCourseInfoList().size() > 0)
         {
             String leftAlign = "| %-11s | %-43s |%-9s | %-11s | %-7s |%-9s | %-12s | %-10s | %-14s | %-8s |%-14s |%n";
@@ -250,27 +274,58 @@ public class CourseManager{
             System.out.println("There is no registered course(s) for " + student.getName() + "!");
     }
 
-    public void ChangeCourseIndexNumber(Student student, CourseInfo oldClass, CourseInfo newClass)
+    /**
+     * Allow student to change course's class index
+     * Change course index is calling add course and drop course function
+     * @param student Student that request to change course's class index
+     * @param oldClass The course's class index dropped by student
+     * @param newClass The course's class index added by student
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
+    public void ChangeCourseIndexNumber(Student student, CourseInfo oldClass, CourseInfo newClass, Boolean isSwapIndex)
     {
-        if(student.getCourseInfoList().contains(oldClass))
-        {
-            student.getCourseInfoList().add(newClass);
-            student.getCourseInfoList().add(oldClass);
-        }
-        else
-            System.out.println("This is not registered course(s) for " + student.getName() + "!");
+        student.AddCourse(newClass, false);
+
+        student.DropCourse(oldClass, false);
 
     }
 
-    public void SwapIndexNumber(int index_ID, int student_ID)
+    /**
+     * Allow student to swap course's class index with another student
+     * Swap course index is calling add course and drop course function for both student
+     * Example: student add student 2's course and drop his own course, vice versa for student 2
+     * @param firstStudent Student 1 that request to swap course's class index
+     * @param secondStudent Student 2 that agreed to swap course's class index with student 1
+     * @param firstStudentCourse Student 1 course class's index that swap to student 2
+     * @param secondStudentCourse Student 2 course class's index that swap to student 1
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
+    public void SwapIndexNumber(Student firstStudent, Student secondStudent, CourseInfo firstStudentCourse, CourseInfo secondStudentCourse, Boolean isSwapIndex)
     {
-        
+        System.out.println("You have successfully changed from the course index "+ firstStudentCourse.getClassList().get(0).getIndexNo() + " to the course index "+ secondStudentCourse.getClassList().get(0).getIndexNo()  +
+                " with Student " + secondStudent.getName());
+
+        System.out.println("sending email...");
+        mailHelper.setRecipientEmail(firstStudent.getEmail());
+        mailHelper.setMessage("You have successfully swap to course index " + secondStudentCourse.getClassList().get(0).getIndexNo());
+        mailHelper.setEmailSubject("Successfully swap to course index " + secondStudentCourse.getClassList().get(0).getIndexNo());
+        mailHelper.SendEmail();
+
+        mailHelper.setRecipientEmail(secondStudent.getEmail());
+        mailHelper.setMessage("You have successfully swap to course index " + firstStudentCourse.getClassList().get(0).getIndexNo());
+        mailHelper.setEmailSubject("Successfully swap to course index " + firstStudentCourse.getClassList().get(0).getIndexNo());
+        mailHelper.SendEmail();
+        System.out.println("Email notification sent!");
+
+        firstStudent.AddCourse(secondStudentCourse,isSwapIndex);
+        secondStudent.AddCourse(firstStudentCourse,isSwapIndex);
+
+        firstStudent.DropCourse(firstStudentCourse,isSwapIndex);
+        secondStudent.DropCourse(secondStudentCourse,isSwapIndex);
     }
-    //endregion
     //</editor-fold>
 
     //<editor-fold desc="<Admin>">
-
     /**
      * Usage: Allow admin to change student's access period, and update to the database.
      * <p> Inputs:</p>
@@ -530,7 +585,7 @@ public class CourseManager{
     }
 
     /**
-     * Usage: allow admin to updat course
+     * Usage: allow admin to update course
      */
     public void UpdateCourse(){
         Scanner myObj = new Scanner(System.in);
@@ -667,7 +722,7 @@ public class CourseManager{
     }
 
     /**
-     * Usage: Allow damin to add class info
+     * Usage: Allow admin to add class info
      */
     private ClassInfo addClassInfo(Scanner myObj){
         System.out.println("Enter Class Index No: ");
@@ -798,7 +853,7 @@ public class CourseManager{
                     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                     String strDate = formatter.format(currentTime);
                     IOUtills.setFilename("StudentList_" + indexNo + "_" + strDate);
-                    IOUtills.setDirectoryName(System.getProperty("user.dir"));
+                    IOUtills.setDirectoryName("C:/Users/USER/Documents/MySTARS");
                     IOUtills.setFiletype("txt");
                     IOUtills.setContent(String.join("\r\n",output));
                     IOUtills.WriteFile();
@@ -946,6 +1001,15 @@ public class CourseManager{
     //</editor-fold>
 
     //<editor-fold desc="<UpdateDB>">
+
+    /**
+     * Update database by write to file
+     * @param filename filename to write
+     * @param filetype filetype .txt
+     * @param content context to write to file
+     * @param directoryName file directory
+     * @param append Flag to check if to append or overwrite the .txt file
+     */
     private void UpdateDB(String filename,String filetype,String content,String directoryName, Boolean append)
     {
         IOUtills saveCourse = new IOUtills(filename,filetype,content,directoryName);

@@ -5,72 +5,152 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * Entity Class : Login
+ * Handle all the account action for user
+ * @author Tan Wen Jun & Mo Naiming
+ * @version 1.0
+ * @since 2020-11-10
  */
 public class Login {
-
+    /**
+     * username input
+     */
     private String myUsername;
+    /**
+     * username password
+     */
     private String myPassword;
+    /**
+     * user role
+     */
     private EnumHelper.UserRole myRole;
+    /**
+     * secure password
+     */
     private String securePassword;
+    /**
+     * salt for encryption
+     */
     private String salt;
+    /**
+     * user's account
+     */
     private Account user;
 
+    /**
+     * Get user's username
+     * @return username in string
+     */
     public String getMyUsername() {
         return myUsername;
     }
 
+    /**
+     * Set user's username
+     * @param myUsername
+     */
     public void setMyUsername(String myUsername) {
         this.myUsername = myUsername;
     }
 
+    /**
+     * Get user's password
+     * @return password in string
+     */
     public String getMyPassword() {
         return myPassword;
     }
 
+    /**
+     * Set user's password
+     * @param myPassword
+     */
     public void setMyPassword(String myPassword) {
         this.myPassword = myPassword;
     }
 
+    /**
+     * Get secure password
+     * @return secure password in string
+     */
     public String getSecurePassword() {
         return securePassword;
     }
 
+    /**
+     * Set secure password
+     * @param securePassword
+     */
     public void setSecurePassword(String securePassword) {
         this.securePassword = securePassword;
     }
 
+    /**
+     * Get salt
+     * @return salt in string
+     */
     public String getSalt() {
         return salt;
     }
 
+    /**
+     * Set salt
+     * @param salt
+     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
 
+    /**
+     * Get user account
+     * @return account reference
+     */
     public Account getUser() {
         return user;
     }
 
+    /**
+     * Set user account
+     * @param user
+     */
     public void setUser(Account user) {
         this.user = user;
     }
 
+    /**
+     * Set user role
+     * @param userRole
+     */
     public void setMyRole(EnumHelper.UserRole userRole){
         this.myRole = userRole;
     }
 
+    /**
+     * Get user role
+     * @return Enum.UserRole
+     */
     public EnumHelper.UserRole getMyRole(){
         return myRole;
     }
 
-    //Constructor
+    /**
+     * Create a login object to take it user input for username and password
+     * @param myUsername
+     * @param myPassword
+     */
     public Login(String myUsername, String myPassword) {
         this.myUsername = myUsername;
         this.myPassword = myPassword;
         user = new Account(myUsername,myPassword);
     }
 
+    /**
+     * Create a login object to take it encryption attributes below
+     * @param myUsername
+     * @param myPassword
+     * @param salt
+     * @param securePassword
+     * @param role
+     */
     public Login(String myUsername, String myPassword,String salt,String securePassword,EnumHelper.UserRole role) {
         this.myUsername = myUsername;
         this.myPassword = myPassword;
@@ -138,21 +218,28 @@ public class Login {
         }
     }
 
+    /**
+     * Get student profile information
+     * @return student reference
+     */
     public Student getStudentProfile(){
         return getUser().getStudentProfile();
     }
 
+    /**
+     * Get admin profile information
+     * @return admin reference
+     */
     public Admin getAdminProfile(){
         return getUser().getAdminProfile();
     }
 
     /**
-     *
+     * Check student's access period
      * @param accessPeriod user's accessPeriod from UserTable
      * @return status to represent the user is good to login (login within the access period)
      * @throws ParseException invalid date
      */
-
     public static boolean checkAccessPeriod(String accessPeriod) throws ParseException {
 
         LocalDateTime getTodayDate = LocalDateTime.now();
@@ -167,6 +254,9 @@ public class Login {
         return false;
     }
 
+    /**
+     * To sign out user
+     */
     public void SignOut(){
         System.out.println("User has been signed out!");
     }

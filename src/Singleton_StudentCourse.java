@@ -1,5 +1,10 @@
 import java.util.ArrayList;
-
+/**
+ * Singleton for StudentCourse database
+ * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @version 1.0
+ * @since 2020-11-15
+ */
 public class Singleton_StudentCourse
 {
     // static variable single_instance of type Singleton

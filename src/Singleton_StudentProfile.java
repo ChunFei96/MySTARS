@@ -1,7 +1,12 @@
 
 
 import java.util.ArrayList;
-
+/**
+ * Singleton for StudentProfile database
+ * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @version 1.0
+ * @since 2020-11-15
+ */
 public class Singleton_StudentProfile {
 
     private static Singleton_StudentProfile single_instance = null;

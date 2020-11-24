@@ -17,36 +17,79 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+/**
+ * Handle all the account action for user
+ * @author Tan Wen Jun & Mo Naiming
+ * @version 1.0
+ * @since 2020-11-10
+ */
 public class Account {
-
+    /**
+     * user password
+     */
     private String password;
+    /**
+     * user's username
+     */
     private String username;
+    /**
+     * user role (student/admin)
+     */
     private EnumHelper.UserRole userRole;
-    
+
+    /**
+     * Get the user password
+     * @return this user's password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Set the user password
+     * @param password raw password input to be encrypted when create account
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Get the user's username
+     * @return this user's username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Set the user's username
+     * @param username username input when create account
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Set the user's role (student/admin)
+     * @param userRole specific the user role
+     */
     public void setUserRole(EnumHelper.UserRole userRole){
         this.userRole = userRole;
     }
 
+    /**
+     * Get the user's role (student/admin)
+     * @return Enum.UserRole (student/admin)
+     */
     public EnumHelper.UserRole getUserRole(){
         return userRole;
     }
 
+    /**
+     * Create a new user account by passing in raw username and password (to be encrypted)
+     * @param username raw username input by user
+     * @param password raw password input by user
+     */
     //Constructor
     public Account(String username, String password) {
         this.password = password;
@@ -74,8 +117,8 @@ public class Account {
         //Content format: <username>,<password>,<salt>,<securePassword>,<role>
         String content = getUsername() + "," + getPassword() + "," + salt + "," + mySecurePassword + "," + getUserRole() ;
 
-        //String path = "C:/Users/USER/Documents/MySTARS" + "/UserTable";
-        String path = System.getProperty("user.dir") + "/UserTable";
+        String path = "C:/Users/USER/Documents/MySTARS" + "/UserTable";
+        //String path = System.getProperty("user.dir") + "/UserTable";
 
         if(Files.notExists(Path.of(path))){
             IOUtills.createDirectory("UserTable");
@@ -89,6 +132,11 @@ public class Account {
         IOUtills.WriteFile();
     }
 
+    /**
+     * Retrieve user's account info
+      * @param username username used to verify user info
+     * @return Login reference
+     */
     public Login getAccountInfo(String username){
 
         //String inputFile = "C:/Users/USER/Documents/MySTARS" + "/UserTable/user.txt";
@@ -108,6 +156,10 @@ public class Account {
         return null;
     }
 
+    /**
+     * Retrieve student's profile when user is student role
+     * @return student reference
+     */
     public Student getStudentProfile(){
         Singleton_StudentProfile studentProfile = Singleton_StudentProfile.getInstance();
         Student student = null;
@@ -123,93 +175,6 @@ public class Account {
                 }
             }
         }
-
-//        String inputFile = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
-//
-//        //Check against UserTable to find user data
-//        if(Files.notExists(Path.of(inputFile))){
-//            //System.out.println("Please try login again!");
-//            return null;
-//        }
-//
-//        IOUtills.ReadFile(inputFile);
-//        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
-//
-//        //TODO not always get the first one
-//        String[] userData = output.get(0).split(",");
-
-//        if(student != null){
-////            Student student = new Student(userData[0], userData[1], userData[2], userData[3],
-////                    userData[4], userData[5], EnumHelper.UserRole.valueOf(userData[6]),
-////                    EnumHelper.Gender.valueOf(userData[7]), userData[8],userData[9],userData[10]);
-//
-//            // retrieve all the registered course
-//            Singleton_StudentCourse studentCourse = Singleton_StudentCourse.getInstance();
-//            Singleton_CourseInfo courseInfo = Singleton_CourseInfo.getInstance();
-//
-//            ArrayList<StudentCourse> studentCourseArrayList = new ArrayList<>();
-//
-//            for(int i=0; i < studentCourse.studentCourseDB.size(); i++)
-//            {
-//                if(studentCourse.studentCourseDB.get(i).getStudentMatricNo().toUpperCase().equals(student.getMatricNo().toUpperCase()))
-//                {
-//                    studentCourseArrayList.add(studentCourse.studentCourseDB.get(i));
-//                }
-//            }
-//
-//            ArrayList<CourseInfo> courseInfoArrayList = new ArrayList<>();
-//
-//            for(int j=0; j < courseInfo.courseInfoDB.size(); j++)
-//            {
-//                for(int k=0; k < studentCourseArrayList.size(); k++)
-//                {
-//                    if(courseInfo.courseInfoDB.get(j).getCode().equals(studentCourseArrayList.get(k).getCourseCode()))
-//                    {
-//                        CourseInfo courseInfo1 = new CourseInfo(courseInfo.courseInfoDB.get(j));
-//
-//
-//                        for(int z=0; z< courseInfo.courseInfoDB.get(j).getClassList().size() ; z++)
-//                        {
-//                            if(courseInfo.courseInfoDB.get(j).getClassList().get(z).getIndexNo().equals(studentCourseArrayList.get(k).getClassIndex()))
-//                            {
-//                                courseInfo1.addClass(courseInfo.courseInfoDB.get(j).getClassList().get(z));
-//                            }
-//                        }
-//                        student.addCourse(courseInfo1);
-//                    }
-//                }
-//            }
-//
-////            //remove not related class
-////            for(int z=0; z < student.getCourseInfoList().size(); z++)
-////            {
-////                for(int a = 0; a < student.getCourseInfoList().get(z).getClassList().size(); )
-////                {
-////                    for(int b=0; b < studentCourseArrayList.size(); b++)
-////                    {
-////                        if(student.getCourseInfoList().get(z).getCode().equals(studentCourseArrayList.get(b).getCourseCode()) &&
-////                                !student.getCourseInfoList().get(z).getClassList().get(a).getIndexNo().equals(studentCourseArrayList.get(b).getClassIndex()))
-////                        {
-////                            student.getCourseInfoList().get(z).getClassList().remove(student.getCourseInfoList().get(z).getClassList().get(a));
-////                        }
-////                        else
-////                            a++;
-////                    }
-////                }
-////
-////            }
-//
-////            for(int z=0; z < courseInfo.courseInfoDB.get(j).getClassList().size(); z++)
-////            {
-////                if(courseInfo.courseInfoDB.get(j).getClassList().get(z).getIndexNo().equals(studentCourseArrayList.get(k).getClassIndex()))
-////                {
-////                    courseInfo1.addClass(courseInfo.courseInfoDB.get(j).getClassList().get(z));
-////                }
-////            }
-//
-//
-//            return student;
-//        }
         return student;
     }
 
@@ -218,8 +183,8 @@ public class Account {
      * @return user as admin
      */
     public Admin getAdminProfile(){
-        //String inputFile = "C:/Users/USER/Documents/MySTARS" + "/AdminProfile/adminProfile.txt";
-        String inputFile = System.getProperty("user.dir") + "/AdminProfile/adminProfile.txt";
+        String inputFile = "C:/Users/USER/Documents/MySTARS" + "/AdminProfile/adminProfile.txt";
+        //String inputFile = System.getProperty("user.dir") + "/AdminProfile/adminProfile.txt";
 
         //Check against UserTable to find user data
         if(Files.notExists(Path.of(inputFile))){

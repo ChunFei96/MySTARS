@@ -1,7 +1,10 @@
 
 
 /**
- *  Helper class for ENUM
+ * Enum helper class to define constant variable
+ * @author Krystal Hwang Yan Lin 
+ * @version 1.0
+ * @since 2020-11-05
  */
 public abstract class EnumHelper {
 

@@ -1,12 +1,12 @@
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 
 /**
  * PasswordUtils - util class that manages password related issue.
@@ -14,11 +14,26 @@ import javax.crypto.spec.PBEKeySpec;
  * <p>
  *     hashing the password, verify user enter password, generate random password for new created account
  * </p>
+ * @author Tan Wen Jun & Mo Naiming
+ * @version 1.0
+ * @since 2020-11-10
  */
 public class PasswordUtils {
+    /**
+     * random generator
+     */
     private static final Random RANDOM = new SecureRandom();
+    /**
+     * salt aplhabet
+     */
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    /**
+     * iterations
+     */
     private static final int ITERATIONS = 10000;
+    /**
+     * key length
+     */
     private static final int KEY_LENGTH = 256;
 
     /**

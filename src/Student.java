@@ -1,16 +1,50 @@
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * Student concrete class that implements student interface for mandatory function and extends User class for common attributes
+ * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @version 1.0
+ * @since 2020-11-15
+ */
 public class Student extends User implements IStudent{
 
+    /**
+     * student matriculation number
+     */
     private String matricNo;
+    /**
+     * student access period start date
+     */
     private String accessPeriodStart;
+    /**
+     * student access period start end
+     */
     private String accessPeriodEnd;
+    /**
+     * student's list of courses
+     */
     private ArrayList<CourseInfo> courseInfoList;
+    /**
+     * student uses CourseManager reference
+     */
     private CourseManager courseManager;
 
+    /**
+     * Create a student object reference with attributes below
+     * @param name
+     * @param nationality
+     * @param email
+     * @param username
+     * @param password
+     * @param contactNo
+     * @param role
+     * @param sex
+     * @param matricNo
+     * @param accessPeriodStart
+     * @param accessPeriodEnd
+     */
     public Student(String name, String nationality, String email, String username, String password, String contactNo,
                    EnumHelper.UserRole role, EnumHelper.Gender sex, String matricNo, String accessPeriodStart,String accessPeriodEnd)
     {
@@ -22,56 +56,101 @@ public class Student extends User implements IStudent{
         courseManager = new CourseManager();
     }
 
+    /**
+     * Get student access period start date
+     * @return start date in string
+     */
     public String getAccessPeriodStart() {
         return accessPeriodStart;
     }
 
+    /**
+     * Set student access period start date
+     * @param accessPeriodStart
+     */
     public void setAccessPeriodStart(String accessPeriodStart) {
         this.accessPeriodStart = accessPeriodStart;
     }
 
+    /**
+     * Get student access period end date
+     * @return end date in string
+     */
     public String getAccessPeriodEnd() {
         return accessPeriodEnd;
     }
 
+    /**
+     * Set student access period end date
+     * @param accessPeriodEnd
+     */
     public void setAccessPeriodEnd(String accessPeriodEnd) {
         this.accessPeriodEnd = accessPeriodEnd;
     }
 
+    /**
+     * Get student list of courses
+     * @return list of course object
+     */
     public ArrayList<CourseInfo> getCourseInfoList()
     {
         return this.courseInfoList;
     }
 
+    /**
+     * Allow student to register course with vacancy available
+     * @param courseInfo The course selected by student
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
     public void AddCourse(CourseInfo courseInfo, Boolean isSwapIndex)
     {
         courseManager.AddCourse(this, courseInfo, isSwapIndex);
     }
-
+    /**
+     * Allow student to drop their registered course
+     * @param courseInfo The course dropped by student
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
     public void DropCourse(CourseInfo courseInfo, Boolean isSwapIndex)
     {
         courseManager.DropCourse(this, courseInfo, isSwapIndex);
     }
-
+    /**
+     * Allow student to print their registered courses
+     */
     public void RegisteredCourses()
     {
         courseManager.RegisteredCourses(this);
     }
-
-
-    public void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass)
+    /**
+     * Allow student to change course's class index
+     * @param oldClass The course's class index dropped by student
+     * @param newClass The course's class index added by student
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
+    public void ChangeCourseIndexNumber(CourseInfo oldClass, CourseInfo newClass, Boolean isSwapIndex)
     {
-        courseManager.ChangeCourseIndexNumber(this,oldClass,newClass);
+        courseManager.ChangeCourseIndexNumber(this,oldClass,newClass, isSwapIndex);
     }
-
-    public void SwapIndexNumber(int index_ID, int student_ID)
+    /**
+     * Allow student to swap course's class index with another student
+     * @param secondStudent Student 2 that agreed to swap course's class index with student 1
+     * @param firstStudentCourse Student 1 course class's index that swap to student 2
+     * @param secondStudentCourse Student 2 course class's index that swap to student 1
+     * @param isSwapIndex Flag to check if student performs the swap index with other student, bypass reduce vacancy or queue process
+     */
+    public void SwapIndexNumber(Student secondStudent, CourseInfo firstStudentCourse, CourseInfo secondStudentCourse, Boolean isSwapIndex)
     {
-        
+        courseManager.SwapIndexNumber(this,secondStudent, firstStudentCourse,secondStudentCourse, isSwapIndex);
     }
-
+    /**
+     * Check course vacancy
+     * @return the course's vacancy
+     */
     public int CheckCourseVacancy()
     {
-        return 0;
+        int result = new CourseManager().CheckCourseVacancy();
+        return result;
     }
 
     @Override
@@ -80,21 +159,38 @@ public class Student extends User implements IStudent{
         return super.ToStr() + "," + String.join(",",raw);
     }
 
+    /**
+     * Get student matriculation number
+     * @return matriculation number in string
+     */
     public String getMatricNo()
     {
         return matricNo;
     }
 
+    /**
+     * student add course to their course list
+     * @param courseInfo
+     */
     public void addCourse(CourseInfo courseInfo)
     {
         this.courseInfoList.add(courseInfo);
     }
 
+    /**
+     * student drop course fromt their course list
+     * @param courseInfo
+     */
     public void dropCourse(CourseInfo courseInfo)
     {
         this.courseInfoList.remove(courseInfo);
     }
 
+    /**
+     * Retrieve student information from StudentProfile.txt
+     * @param skipByColumnName column name to skip when retrieving
+     * @return student information in string
+     */
     public String getAllRecordInDB(String skipByColumnName){
         ArrayList<String> d = new ArrayList<String>();
         for(var i :  Singleton_StudentProfile.getInstance().studentProfileDB){
@@ -104,7 +200,11 @@ public class Student extends User implements IStudent{
         }
         return String.join("\r\n",d);
     }
-
+    /**
+     * Get student information
+     * @param data student object reference
+     * @return student information in string
+     */
     public String getRecordInDB(Student data){
         String [] d = new String[] {data.getName(),data.getNationality(),data.getEmail(),data.getUsername()
                 ,data.getPassword(),data.getContactNo(),data.getUserRole().toString(),
@@ -112,6 +212,10 @@ public class Student extends User implements IStudent{
         return String.join(",",d);
     }
 
+    /**
+     * Print list of student details
+     * @param students
+     */
     public void PrintStudents(ArrayList<Student> students){
 
         if(students.size() > 0){
@@ -131,6 +235,11 @@ public class Student extends User implements IStudent{
         }
     }
 
+    /**
+     * Check if student duplicated
+     * @param newStudent add new student object reference
+     * @return if duplication true of false
+     */
     public boolean checkDuplicateStudent(Student newStudent){
         boolean output = true;
 

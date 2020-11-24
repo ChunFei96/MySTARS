@@ -17,23 +17,41 @@ import java.util.Properties;
  *<p>
  * password = thisiscz2002
  *</p>
+ * @author Tan Wen Jun & Mo Naiming
+ * @version 1.0
+ * @since 2020-11-10
  */
 
 public class MailHelper
 {
-
+    /**
+     * SSL socket factory
+     */
     private static final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+    /**
+     * receiver email address
+     */
     private static String recipientEmail;
+    /**
+     * email content
+     */
     private static String message;
+    /**
+     * email title
+     */
     private static String emailSubject;
 
+    /**
+     * Get receiver email address
+     * @return email in string
+     */
     public static String getRecipientEmail() {
         return recipientEmail;
     }
 
     /**
-     *
-     * @param recipientEmail set the recipient email address
+     * set the recipient email address
+     * @param recipientEmail
      */
     public static void setRecipientEmail(String recipientEmail) {
         MailHelper.recipientEmail = recipientEmail;
@@ -51,6 +69,10 @@ public class MailHelper
         MailHelper.message = message;
     }
 
+    /**
+     * Get email title
+     * @return title in string
+     */
     public static String getEmailSubject() {
         return emailSubject;
     }
@@ -63,11 +85,19 @@ public class MailHelper
         MailHelper.emailSubject = emailSubject;
     }
 
+    /**
+     * Create a MailHelper object
+     */
     public MailHelper()
     {
 
     }
 
+    /**
+     * Create a MailHelper object with attributes below
+     * @param recipientEmail
+     * @param message
+     */
     public MailHelper(String recipientEmail, String message) {
         this.recipientEmail = recipientEmail;
         this.message = message;
@@ -130,14 +160,5 @@ public class MailHelper
             System.out.println("Error: " + e);
         }
     }
-
-    public static void main(String [] args){
-
-        MailHelper test = new MailHelper("chunfei96@hotmail.com","This is testing email.");
-        test.setEmailSubject("CZ2002");
-        test.SendEmail();
-    }
-
-
 }
 

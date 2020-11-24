@@ -1,5 +1,10 @@
 import java.util.ArrayList;
-
+/**
+ * Singleton for User database
+ * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @version 1.0
+ * @since 2020-11-15
+ */
 public class Singleton_UserTable {
 
     private static Singleton_UserTable single_instance = null;
