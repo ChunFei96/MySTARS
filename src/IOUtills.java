@@ -3,6 +3,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * IOUtills - helper class for I/O
+ */
 public class IOUtills {
 
 
@@ -52,6 +55,9 @@ public class IOUtills {
         IOUtills.fileInput = fileInput;
     }
 
+    /**
+     * Usage: Create new directory
+     */
     public static void createDirectory(String newFolderName){
         //File file = new File("C:/Users/USER/Documents/MySTARS" + "/" + newFolderName);
         File file = new File(System.getProperty("user.dir") + "/" + newFolderName);
@@ -71,6 +77,9 @@ public class IOUtills {
         setDirectoryName(directoryName);
     }
 
+    /**
+     * Usage: Read file
+     */
     public static void ReadFile(String filepath){
         try {
             ArrayList<String> output = new ArrayList<String>();
@@ -92,6 +101,9 @@ public class IOUtills {
         }
     }
 
+    /**
+     * Usage: Write file with overwrite the original file content
+     */
     public static void WriteFile(){
         try {
 
@@ -113,6 +125,9 @@ public class IOUtills {
         }
     }
 
+    /**
+     * Usage: Write file with appending new content to last row
+     */
     public static void WriteFile(Boolean append){
         try {
 
@@ -134,6 +149,9 @@ public class IOUtills {
         }
     }
 
+    /**
+     * Usage: Update file
+     */
     public static void UpdateFile(){
 
     }

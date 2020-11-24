@@ -106,7 +106,7 @@ public class Student extends User implements IStudent{
     }
 
     public String getRecordInDB(Student data){
-        String [] d = new String[] {data.getName(),data.getNationality(),data.getUsername()
+        String [] d = new String[] {data.getName(),data.getNationality(),data.getEmail(),data.getUsername()
                 ,data.getPassword(),data.getContactNo(),data.getUserRole().toString(),
                 data.getGender().toString(),data.getMatricNo(),data.getAccessPeriodStart(),data.getAccessPeriodEnd()};
         return String.join(",",d);

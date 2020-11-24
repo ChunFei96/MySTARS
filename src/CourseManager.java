@@ -1,13 +1,11 @@
 import java.lang.reflect.Array;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -282,35 +280,40 @@ public class CourseManager{
      * @throws Exception invalid date
      */
     public void EditStudentAccessPeriod() throws Exception {
-        //TODO: Beautify Print
         System.out.println("Retrieving Student Info: ");
-        System.out.println("Name | Matrix No | Access Period (Start) | Access Period (End)");
-        for(Student j : Singleton_StudentProfile.getInstance().studentProfileDB){
-            String [] info = new String[]{
-                    j.getName(),j.getMatricNo(),j.getAccessPeriodStart(),j.getAccessPeriodEnd()
-            };
-            System.out.println(String.join(" | ",info));
-        }
+        String leftAlign = "| %-15s | %-17s |%-31s |%n";
+        System.out.format("+-----------------+-------------------+--------------------------------+%n");
+        System.out.format("|      Name       |     Matrix No     |   Access Period Start - End    |%n");
+        System.out.format("+-----------------+-------------------+--------------------------------+%n");
 
+        for(Student j : Singleton_StudentProfile.getInstance().studentProfileDB){
+            System.out.format(leftAlign,j.getName(),j.getMatricNo(),(j.getAccessPeriodStart() + " - " + j.getAccessPeriodEnd()));
+        }
+        System.out.format("+-----------------+-------------------+--------------------------------+%n");
+
+        boolean hasStudent = false;
         Scanner sr = new Scanner(System.in);  // Create a Scanner object
+
         System.out.println("Enter Student Matrix No: ");
         String studentMatrixNo = sr.nextLine();
-
         Student student = null;
 
-        for(Student j : Singleton_StudentProfile.getInstance().studentProfileDB){
-            if(j.getMatricNo().equals(studentMatrixNo)){
-                student = j;  //Assign the student obj
-
-//                String [] info = new String[]{
-//                        j.getName(),j.getMatricNo(),j.getAccessPeriodStart(),j.getAccessPeriodEnd()
-//                };
-//
-//                System.out.println("Retrieving Student Info: ");
-//                System.out.println(String.join(" | ",info));
-                break;
+        do{
+            for(Student j : Singleton_StudentProfile.getInstance().studentProfileDB){
+                if(j.getMatricNo().equals(studentMatrixNo)){
+                    student = j;  //Assign the student obj
+                    break;
+                }
             }
-        }
+            if(student == null){
+                System.out.println("Enter Student Matrix No: ");
+                studentMatrixNo = sr.nextLine();
+            }
+            else{
+                hasStudent = true;
+            }
+        }while(!hasStudent);
+
         String unchangedData = student.getAllRecordInDB(studentMatrixNo);
 
         boolean valid = false;
@@ -319,10 +322,16 @@ public class CourseManager{
                 System.out.println("Enter New Access Period (dd/MM/yyyy): ");
                 String _accessPeriod = sr.nextLine();
 
-                //TODO: Catch Invalid Date entry
-                new SimpleDateFormat("dd/MM/yyyy").parse(_accessPeriod);
-                student.setAccessPeriodEnd(_accessPeriod);
-                valid = true;
+                var validEntry = isDateValid(_accessPeriod);
+                var dateBefore = isDateBefore(student.getAccessPeriodStart(),_accessPeriod);
+
+                if(dateBefore && validEntry){
+                    student.setAccessPeriodEnd(_accessPeriod);
+                    valid = true;
+                }
+                else if(validEntry && !dateBefore){
+                    System.out.println("Please enter a date greater than start date!");
+                }
             }catch(DateTimeParseException e){
                 System.out.println("Invalid access period, please try again!");
             }
@@ -331,8 +340,51 @@ public class CourseManager{
         System.out.println("You have successfully changed the student’s access period.");
 
         unchangedData += "\r\n" + student.getRecordInDB(student);
+
         UpdateDB("StudentProfile","txt",unchangedData.trim(),"StudentProfile",false);
     }
+
+    /**
+     * Convert string to Date
+     * @param date date in Str to parse Date
+     * @return status of valid date
+     */
+    public static boolean isDateValid(String date)
+    {
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Date comparable method to check whether is before
+     * @param date1 date1
+     * @param date2 date2
+     * @return status of date is before
+     */
+    public static boolean isDateBefore(String date1,String date2)
+    {
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            Date first = df.parse(date1);
+            Date second = df.parse(date2);
+
+            if(first.before(second)){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
 
     /**
      * Usage: Allow admin to add student into database.
@@ -476,7 +528,7 @@ public class CourseManager{
     }
 
     /**
-     * Usage: allow a
+     * Usage: allow admin to updat course
      */
     public void UpdateCourse(){
         Scanner myObj = new Scanner(System.in);
@@ -610,7 +662,7 @@ public class CourseManager{
     }
 
     /**
-     * Usage:
+     * Usage: Allow damin to add class info
      */
     private ClassInfo addClassInfo(Scanner myObj){
         System.out.println("Enter Class Index No: ");
@@ -842,12 +894,18 @@ public class CourseManager{
         boolean isClassValid = false;
         Scanner sr = new Scanner(System.in);
 
-        //TODO: Beautify Print
+        String leftAlign = "| %-11s | %-43s |%-9s |%n";
+        System.out.format("+-------------+---------------------------------------------+----------+%n");
+        System.out.format("| Course Code |                  Course Name                |   Type   |%n");
+        System.out.format("+-------------+---------------------------------------------+----------+%n");
+
         ArrayList<CourseInfo> CourseInfo = Singleton_CourseInfo.getInstance().courseInfoDB;
         for(CourseInfo Course : CourseInfo){
-            System.out.println((counter + 1) + ". " + Course.getCode() + " " + Course.getName());
+            //System.out.println((counter + 1) + ". " + Course.getCode() + " " + Course.getName());
+            System.out.format(leftAlign, (counter+1) + ": " + Course.getCode(), Course.getName(), Course.getType());
             counter++;
         }
+        System.out.format("+-------------+---------------------------------------------+----------+%n");
 
         do{
             System.out.println("Select A Course: " );
