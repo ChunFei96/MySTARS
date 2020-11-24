@@ -139,8 +139,8 @@ public class Account {
      */
     public Login getAccountInfo(String username){
 
-        //String inputFile = "C:/Users/USER/Documents/MySTARS" + "/UserTable/user.txt";
-        String inputFile = System.getProperty("user.dir") + "/UserTable/user.txt";
+        String inputFile = "C:/Users/USER/Documents/MySTARS" + "/UserTable/user.txt";
+        //String inputFile = System.getProperty("user.dir") + "/UserTable/user.txt";
 
         //Check against UserTable to find user data
         if(Files.notExists(Path.of(inputFile))){

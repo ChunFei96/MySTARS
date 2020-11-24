@@ -26,8 +26,8 @@ public class MyStars {
 //        user_2.addAccount();
 
         //Test Student Acc
-        String username = "chunfei";
-        String password = "abc123";
+        //String username = "chunfei";
+        //String password = "abc123";
 
         //String username = "Mike";
         //String password = "[C@368239c8";
@@ -38,15 +38,15 @@ public class MyStars {
 
         //Run by Console
 
-//        console = System.console();
-//
-//        if (console == null) {
-//            System.out.println("Couldn't get Console instance");
-//            System.exit(0);
-//        }
-//
-//        String username = console.readLine("Enter your username: ");
-//        char[] password = console.readPassword("Enter your password: ");
+        console = System.console();
+
+        if (console == null) {
+            System.out.println("Couldn't get Console instance");
+            System.exit(0);
+        }
+
+        String username = console.readLine("Enter your username: ");
+        char[] password = console.readPassword("Enter your password: ");
         //console.printf("Password entered was: %s%n", new String(passwordArray));
 
 

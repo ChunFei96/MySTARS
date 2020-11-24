@@ -173,8 +173,8 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
-               //_filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
-                _filepath = getDirectoryName() + File.separator + _filepath ;
+                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
+                //_filepath = getDirectoryName() + File.separator + _filepath ;
             }
 
             //File.separator => back or forward slash
@@ -197,8 +197,8 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
-                //_filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
-                _filepath = getDirectoryName() + File.separator + _filepath ;
+                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
+                //_filepath = getDirectoryName() + File.separator + _filepath ;
             }
 
             //File.separator => back or forward slash
