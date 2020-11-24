@@ -458,6 +458,7 @@ public class MyStars {
 
     private static void AdminSelection(Admin admin) throws Exception {
         int choice = 0;
+        MailHelper.setRecipientEmail(admin.getEmail());
 
         do{
             AdminMenu();
@@ -467,18 +468,21 @@ public class MyStars {
             switch (choice){
                 case 1:
                     MailHelper.setEmailSubject("Add Student Notifcation");
-                    MailHelper.setRecipientEmail(admin.getEmail());
-
                     admin.AddStudent();    //Update DONE
-
-                    mailHelper = new MailHelper();  //Comment this later
+                    mailHelper = new MailHelper();
                     mailHelper.SendEmail();
                     break;
                 case 2:
+                    MailHelper.setEmailSubject("Add Course Notifcation");
                     admin.AddCourse();  //Update DONE
+                    mailHelper = new MailHelper();
+                    mailHelper.SendEmail();
                     break;
                 case 3:
+                    MailHelper.setEmailSubject("Update Course Notifcation");
                     admin.UpdateCourse();  //Update DONE
+                    mailHelper = new MailHelper();
+                    mailHelper.SendEmail();
                     break;
                 case 4:
                     admin.EditStudentAccessPeriod(); //Update DONE

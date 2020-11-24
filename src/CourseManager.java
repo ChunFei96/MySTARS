@@ -522,8 +522,10 @@ public class CourseManager{
             IOUtills.setContent(changedDataClass);
             IOUtills.WriteFile();
 
-            String print = "A new course has added into database successfully.";
+            String print = "A new course " + courseInfo.getName() + " has added into database successfully.";
             System.out.println(print);
+            System.out.println("Email notification sent!");
+            MailHelper.setMessage(print);
         }
     }
 
@@ -547,7 +549,7 @@ public class CourseManager{
             System.out.println("Select an option for update: ");
             choice = myObj.nextInt();
 
-            if(!(choice > 0 && choice < CourseInfo.size())){
+            if(!(choice > 0 && choice <= CourseInfo.size())){
                 System.out.println("Please enter a valid option!");
             }
             else{
@@ -658,7 +660,10 @@ public class CourseManager{
 
         UpdateDB("CourseInfo","txt",unchangedData.trim(),"CourseTable",false);
 
-        System.out.println("You have successfully updated the course.");
+        String msg = "You have successfully updated the course " + selectedCourse.getName() + ".";
+        System.out.println(msg);
+        System.out.println("Email notification sent!");
+        MailHelper.setMessage(msg);
     }
 
     /**
