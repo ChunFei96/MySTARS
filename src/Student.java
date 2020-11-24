@@ -133,17 +133,12 @@ public class Student extends User implements IStudent{
 
     public boolean checkDuplicateStudent(Student newStudent){
         boolean output = true;
-
         var students = Singleton_StudentProfile.getInstance().studentProfileDB;
-
-        var getClassInfo = students.stream().filter(x -> x.getMatricNo().equals(newStudent.getMatricNo())
-                && x.getEmail().equals(newStudent.getEmail()) && x.getUsername().equals(newStudent.getUsername()))
-                .collect(Collectors.toList());
+        var getClassInfo = students.stream().filter(x -> x.getMatricNo().equals(newStudent.getMatricNo()) && x.getEmail().equals(newStudent.getEmail())).collect(Collectors.toList());  // && x.getUsername().equals(newStudent.getUsername()
 
         if(getClassInfo.size() == 0){
             output = false;
         }
-
         return output;
     }
 
