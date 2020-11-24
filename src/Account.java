@@ -51,8 +51,6 @@ public class Account {
     public Account(String username, String password) {
         this.password = password;
         this.username = username;
-//        System.out.println("Account username: <<" +  username + ">>");
-//        System.out.println("Account password: <<" +  password + ">>");
     }
 
     //Create new User account
@@ -72,9 +70,9 @@ public class Account {
         //Content format: <username>,<password>,<salt>,<securePassword>,<role>
         String content = getUsername() + "," + getPassword() + "," + salt + "," + mySecurePassword + "," + getUserRole() ;
 
-        //new IOUtills(getUsername(),"txt",content,"UserTable");
-
+        //String path = "C:/Users/USER/Documents/MySTARS" + "/UserTable";
         String path = System.getProperty("user.dir") + "/UserTable";
+
         if(Files.notExists(Path.of(path))){
             IOUtills.createDirectory("UserTable");
         }
@@ -89,6 +87,7 @@ public class Account {
 
     public Login getAccountInfo(String username){
 
+        //String inputFile = "C:/Users/USER/Documents/MySTARS" + "/UserTable/user.txt";
         String inputFile = System.getProperty("user.dir") + "/UserTable/user.txt";
 
         //Check against UserTable to find user data
@@ -96,21 +95,7 @@ public class Account {
             return null;
         }
 
-//        IOUtills.ReadFile(inputFile);
-//        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
-//        String[] userData = output.get(0).split(",");
-//        if(userData != null){
-//
-//            Login currentUser = new Login(userData[0],userData[1]);
-//            currentUser.setSalt(userData[2]);
-//            currentUser.setSecurePassword(userData[3]);
-//            currentUser.setMyRole(EnumHelper.UserRole.valueOf(userData[4]));
-//
-//            return currentUser;
-//        }
-
         var singleton_userTable = Singleton_UserTable.getInstance().userDB;
-
         for(Login userLogin : singleton_userTable){
             if(userLogin.getMyUsername().equals(username)){
                 return userLogin;
@@ -225,31 +210,25 @@ public class Account {
     }
 
     public Admin getAdminProfile(){
+        //String inputFile = "C:/Users/USER/Documents/MySTARS" + "/AdminProfile/adminProfile.txt";
+        String inputFile = System.getProperty("user.dir") + "/AdminProfile/adminProfile.txt";
 
-
-        boolean del = true;
-        if(del){
-            String inputFile = System.getProperty("user.dir") + "/AdminProfile/chunfei.txt";
-
-            //Check against UserTable to find user data
-            if(Files.notExists(Path.of(inputFile))){
-                //IOUtills.createDirectory("AdminProfile");
-                return null;
-            }
-
-            IOUtills.ReadFile(inputFile);
-            ArrayList<String> output = IOUtills.getFileInput(); //get the file data
-
-            String[] userData = output.get(0).split(",");
-
-            if(userData != null){
-
-                Admin admin = new Admin(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5],
-                        EnumHelper.UserRole.valueOf(userData[6]), EnumHelper.Gender.valueOf(userData[7]));
-                return admin;
-            }
+        //Check against UserTable to find user data
+        if(Files.notExists(Path.of(inputFile))){
+            return null;
         }
 
+        IOUtills.ReadFile(inputFile);
+        ArrayList<String> output = IOUtills.getFileInput(); //get the file data
+
+        String[] userData = output.get(0).split(",");
+
+        if(userData != null){
+
+            Admin admin = new Admin(userData[0], userData[1], userData[2], userData[3], userData[4], userData[5],
+                    EnumHelper.UserRole.valueOf(userData[6]), EnumHelper.Gender.valueOf(userData[7]));
+            return admin;
+        }
         return null;
     }
 }

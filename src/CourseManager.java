@@ -25,24 +25,9 @@ public class CourseManager{
         Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
         Singleton_StudentCourse singleton_studentCourse = Singleton_StudentCourse.getInstance();
 
-        student.addCourse(courseInfo);
-
-        // add course in student course DB
-        StudentCourse studentCourse = new StudentCourse();
-        studentCourse.setStudentMatricNo(student.getMatricNo());
-        studentCourse.setCourseCode(courseInfo.getCode());
-        studentCourse.setClassIndex(courseInfo.getClassList().get(0).getIndexNo());
-
-        singleton_studentCourse.studentCourseDB.add(studentCourse);
-
-        // write back to Student Course txt file
-        String content = student.getMatricNo() + "," + courseInfo.getCode() + "," + courseInfo.getClassList().get(0).getIndexNo() ;
-
-            UpdateDB("StudentCourse","txt",content,"StudentCourseTable",true);
-
         // decrease the course class's vacancy by 1
         // bypass this add vacancy when student swaps index with another student, vacancy should remain no change
-        if(singleton_courseInfo.courseInfoDB != null && singleton_courseInfo.courseInfoDB.size() > 0 && !isSwapIndex)
+        if(singleton_courseInfo.courseInfoDB != null && singleton_courseInfo.courseInfoDB.size() > 0)
         {
             String classContent = "";
             for(int j=0; j < singleton_courseInfo.courseInfoDB.size(); j++)
@@ -55,11 +40,31 @@ public class CourseManager{
                         ClassInfo classInfo = singleton_courseInfo.courseInfoDB.get(j).getClassList().get(k);
                         if(classInfo.getIndexNo() == courseInfo.getClassList().get(0).getIndexNo())
                         {
-                            if(classInfo.getVacancy() > 0)
-                                classInfo.setVacancy(courseInfo.getClassList().get(0).getVacancy() - 1);
-                            else{
+                            if(classInfo.getVacancy() > 0){
+                                if(!isSwapIndex)
+                                    classInfo.setVacancy(courseInfo.getClassList().get(0).getVacancy() - 1);
 
-                                classInfo.setQueue(courseInfo.getClassList().get(0).getQueue() + 1);
+                                student.addCourse(courseInfo);
+
+                                // add course in student course DB
+                                StudentCourse studentCourse = new StudentCourse();
+                                studentCourse.setStudentMatricNo(student.getMatricNo());
+                                studentCourse.setCourseCode(courseInfo.getCode());
+                                studentCourse.setClassIndex(courseInfo.getClassList().get(0).getIndexNo());
+
+                                singleton_studentCourse.studentCourseDB.add(studentCourse);
+
+                                // write back to Student Course txt file
+                                String content = student.getMatricNo() + "," + courseInfo.getCode() + "," + courseInfo.getClassList().get(0).getIndexNo() ;
+
+                                UpdateDB("StudentCourse","txt",content,"StudentCourseTable",true);
+
+                            }
+
+                            else{
+                                if(!isSwapIndex)
+                                    classInfo.setQueue(courseInfo.getClassList().get(0).getQueue() + 1);
+
                                 // create a queue txt file for the class with matric number line by line
                                 String queueContent = student.getMatricNo();
                                 UpdateDB(courseInfo.getCode() + "_" + courseInfo.getClassList().get(0).getIndexNo() + "_Queue", "txt", queueContent, "ClassQueueTable",true);
@@ -143,7 +148,7 @@ public class CourseManager{
                                 classInfo.setQueue(courseInfo.getClassList().get(0).getQueue() - 1);
                                 // help the first queue student to register to this class
                                 String class_filename = singleton_courseInfo.courseInfoDB.get(j).getCode() + "_" + classInfo.getIndexNo() + "_Queue.txt";
-                                String class_filepath = System.getProperty("user.dir") + "/ClassQueueTable/" + class_filename;
+                                String class_filepath = "C:/Users/USER/Documents/MySTARS" + "/ClassQueueTable/" + class_filename;
                                 IOUtills.ReadFile(class_filepath);
 
                                 ArrayList<String> queueList =  IOUtills.getFileInput();
@@ -201,7 +206,7 @@ public class CourseManager{
                                         }
                                     }
                                 }
-                                System.out.println("Done!");
+                                System.out.println("Email notification sent!");
                             }
 
                         }
@@ -243,20 +248,6 @@ public class CourseManager{
         else
             System.out.println("There is no registered course(s) for " + student.getName() + "!");
     }
-
-//    public CourseInfo RegisteredCourses(Student student, int indexNo)
-//    {
-//        for(int i=0; i < student.getCourseInfoList().size() ; i++)
-//        {
-//            if(student.getCourseInfoList().get(i).getIndexNo().toUpperCase() == String.valueOf(indexNo).toUpperCase())
-//            {
-//                System.out.println(i+1 + ": " + student.getCourseInfoList().get(i).getCourseInfo());
-//                return student.getCourseInfoList().get(i);
-//            }
-//        }
-//        System.out.println("There is no course exists for this " + indexNo + " index number!");
-//        return null;
-//    }
 
     public void ChangeCourseIndexNumber(Student student, CourseInfo oldClass, CourseInfo newClass)
     {
@@ -406,11 +397,9 @@ public class CourseManager{
             user_2.setUserRole(EnumHelper.UserRole.STUDENT);
             user_2.addAccount();
 
-            System.out.println("A new student - " + name + " has added into database successfully.");
-
-            //TODO: KIV
-//        var aa = Singleton_StudentProfile.getInstance().studentProfileDB;
-//        newStudent.PrintStudents(aa);
+            String msg = "A new student - " + name + " has added into database successfully.";
+            System.out.println(msg);
+            MailHelper.setMessage(msg);
         }
     }
 
@@ -421,27 +410,6 @@ public class CourseManager{
 
         System.out.println("Enter Course code: ");
         String code = myObj.nextLine();
-
-//        boolean validCourseCode = false;
-//        do{
-//
-//            boolean dup = false;
-//            for(var c : courseInfos){
-//                if(c.getCode().equals(code)){
-//                    dup = true;
-//                    break;
-//                }
-//            }
-//
-//            if(dup){
-//                System.out.println("Please enter an unique Course Code!");
-//                System.out.println("Enter Course code: ");
-//                code = myObj.nextLine();
-//            }
-//            else{
-//                validCourseCode = true;
-//            }
-//        }while(!validCourseCode);
 
         System.out.println("Enter Course name: ");
         String name = myObj.nextLine();
@@ -473,7 +441,7 @@ public class CourseManager{
                 System.out.println("Added a new class successfully.");
             }
 
-            //Singleton_CourseInfo.getInstance().courseInfoDB.add(courseInfo);
+            Singleton_CourseInfo.getInstance().courseInfoDB.add(courseInfo);
 
             //Update 1: CourseTable
             UpdateDB("CourseInfo","txt",changedDataCourse.trim(),"CourseTable",true);
@@ -819,7 +787,7 @@ public class CourseManager{
                     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                     String strDate = formatter.format(currentTime);
                     IOUtills.setFilename("StudentList_" + _StudentProfile.get(0).getCourseCode() + "_" + strDate);
-                    IOUtills.setDirectoryName(System.getProperty("user.dir"));
+                    IOUtills.setDirectoryName("C:\\Users\\USER\\Documents\\MySTARS");
                     IOUtills.setFiletype("txt");
                     IOUtills.setContent(String.join("\r\n",output));
                     IOUtills.WriteFile();

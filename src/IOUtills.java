@@ -53,6 +53,7 @@ public class IOUtills {
     }
 
     public static void createDirectory(String newFolderName){
+        //File file = new File("C:/Users/USER/Documents/MySTARS" + "/" + newFolderName);
         File file = new File(System.getProperty("user.dir") + "/" + newFolderName);
 
         // true if the directory was created, false otherwise
@@ -97,6 +98,7 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
+               //_filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
                 _filepath = getDirectoryName() + File.separator + _filepath ;
             }
 
@@ -117,6 +119,7 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
+                //_filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
                 _filepath = getDirectoryName() + File.separator + _filepath ;
             }
 
