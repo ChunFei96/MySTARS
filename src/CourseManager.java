@@ -452,6 +452,8 @@ public class CourseManager{
         else{
             String formatStudent = newStudent.ToStr();
 
+            Singleton_StudentProfile.getInstance().studentProfileDB.add(newStudent);
+
             //Update Table 1
             UpdateDB("StudentProfile","txt",formatStudent,"StudentProfile",true);
 
@@ -852,6 +854,9 @@ public class CourseManager{
                 }
             }while(!valid);
         }
+        else if(_StudentProfile.size() == 0){
+            System.out.println("There are no student in this class.");
+        }
         else{
             System.out.println("Index No not found, please try again!");
         }
@@ -923,6 +928,9 @@ public class CourseManager{
                     System.out.println("Thank you for your confirmation.");
                 }
             }while(!valid);
+        }
+        else if(_StudentProfile.size() == 0){
+            System.out.println("There are no student in this class.");
         }
         else{
             System.out.println("Course Code not found, please try again!");
