@@ -53,7 +53,11 @@ public class Account {
         this.username = username;
     }
 
-    //Create new User account
+    /**
+     * Usage: Create new User account and save it into /UserTable/user.txt
+     * <p> </p>
+     * required inputs: <username>,<password>,<salt>,<securePassword>,<role>,
+     */
     public void addAccount(){
 
         // Generate Salt. The generated value can be stored in DB.
@@ -209,6 +213,10 @@ public class Account {
         return student;
     }
 
+    /**
+     * Usage: retrieve the Admin profile when the login user is Admin type
+     * @return user as admin
+     */
     public Admin getAdminProfile(){
         //String inputFile = "C:/Users/USER/Documents/MySTARS" + "/AdminProfile/adminProfile.txt";
         String inputFile = System.getProperty("user.dir") + "/AdminProfile/adminProfile.txt";

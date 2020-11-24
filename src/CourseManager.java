@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Control Class
+ */
 public class CourseManager{
 
     private MailHelper mailHelper;
@@ -19,7 +22,7 @@ public class CourseManager{
         mailHelper = new MailHelper();
     }
 
-    //<editor-fold desc="Student">
+    //<editor-fold desc="<Student>">
     public void AddCourse(Student student, CourseInfo courseInfo, Boolean isSwapIndex)
     {
         Singleton_CourseInfo singleton_courseInfo = Singleton_CourseInfo.getInstance();
@@ -268,7 +271,17 @@ public class CourseManager{
     //endregion
     //</editor-fold>
 
-    //region Admin
+    //<editor-fold desc="<Admin>">
+
+    /**
+     * Usage: Allow admin to change student's access period, and update to the database.
+     * <p> </p>
+     * Inputs:
+     * <p> a. Student Matrix No</p>
+     * <p> b. New access period</p>
+     *
+     * @throws Exception
+     */
     public void EditStudentAccessPeriod() throws Exception {
         //TODO: Beautify Print
         System.out.println("Retrieving Student Info: ");
@@ -279,7 +292,6 @@ public class CourseManager{
             };
             System.out.println(String.join(" | ",info));
         }
-
 
         Scanner sr = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Enter Student Matrix No: ");
@@ -323,15 +335,15 @@ public class CourseManager{
         UpdateDB("StudentProfile","txt",unchangedData.trim(),"StudentProfile",false);
     }
 
+    /**
+     * Usage: Allow admin to add student into database.
+     * <p> </p>
+     * Duplication check on same entry for student is not allow.
+     * <p> </p>
+     * Email notification will be sent out when the record has added successfully.
+     */
     public void AddStudent()
     {
-//        String filepath = System.getProperty("user.dir") + "/StudentProfile/StudentProfile.txt";
-//        IOUtills.ReadFile(filepath);
-//
-//        ArrayList<String> studentList = IOUtills.getFileInput();
-
-
-
         //<editor-fold desc="<User inputs>">
         Scanner sr = new Scanner(System.in);
 
@@ -403,6 +415,9 @@ public class CourseManager{
         }
     }
 
+    /**
+     * Usage:
+     */
     public void AddCourse()
     {
         Scanner myObj = new Scanner(System.in);
@@ -458,6 +473,9 @@ public class CourseManager{
         }
     }
 
+    /**
+     * Usage:
+     */
     public void UpdateCourse(){
         Scanner myObj = new Scanner(System.in);
         boolean valid = false;
@@ -589,8 +607,9 @@ public class CourseManager{
         System.out.println("You have successfully updated the course.");
     }
 
-
-
+    /**
+     * Usage:
+     */
     private ClassInfo addClassInfo(Scanner myObj){
         System.out.println("Enter Class Index No: ");
         String indexNo = myObj.nextLine();
@@ -668,8 +687,10 @@ public class CourseManager{
         return newClass;
     }
 
-    public void PrintStudentListByIndex()
-    {
+    /**
+     * Usage:
+     */
+    public void PrintStudentListByIndex(){
         Scanner myObj = new Scanner(System.in);
         System.out.println("===== Print Student List by Class Index =====");
 
@@ -736,6 +757,9 @@ public class CourseManager{
         }
     }
 
+    /**
+     * Usage:
+     */
     public void PrintStudentListByCourse(){
         Scanner myObj = new Scanner(System.in);
         System.out.println("===== Print StudentList By Course =====");
@@ -805,6 +829,9 @@ public class CourseManager{
         }
     }
 
+    /**
+     * Usage:
+     */
     public int CheckCourseVacancy(){
         int counter = 0;
         int c = 0;
@@ -850,9 +877,9 @@ public class CourseManager{
         }while(!isCourseValid);
         return 0;
     }
+    //</editor-fold>
 
-
-    //<editor-fold desc="Private">
+    //<editor-fold desc="<UpdateDB>">
     private void UpdateDB(String filename,String filetype,String content,String directoryName, Boolean append)
     {
         IOUtills saveCourse = new IOUtills(filename,filetype,content,directoryName);

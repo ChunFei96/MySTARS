@@ -1,4 +1,8 @@
 
+/**
+ * Entity Class of User
+ *
+ */
 public class User{
 
     private String name;
@@ -79,14 +83,15 @@ public class User{
 
     public void setGender(EnumHelper.Gender sex) { this.sex = sex;}
 
-
+    /**
+     * Example output = "name,nationality,email,...sex"
+     * @return User object in string with comma separator for all the attributes
+     */
     public String ToStr(){
         String[] raw = new String[]{name,nationality,email,username,
                 password,contactNo, String.valueOf(role), String.valueOf(sex)};
 
-        var cc = String.join(",",raw);
-
-        return cc;
+        return String.join(",",raw);
     }
 
 }

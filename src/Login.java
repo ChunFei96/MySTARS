@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+/**
+ * Entity Class : Login
+ */
 public class Login {
 
     private String myUsername;
@@ -77,7 +80,11 @@ public class Login {
         user = new Account(myUsername,myPassword);  // <---
     }
 
-
+    /**
+     * Usage: validate the sign-in user has the access to the system,
+     * where the function checks for user's account info, matched password and access period.
+     * @return status to indicate the login is permitted
+     */
     public Boolean validateLogin(){
 
         // User provided password to validate
@@ -139,6 +146,12 @@ public class Login {
         return getUser().getAdminProfile();
     }
 
+    /**
+     *
+     * @param accessPeriod user's accessPeriod from UserTable
+     * @return status to represent the user is good to login (login within the access period)
+     * @throws ParseException
+     */
     public static boolean checkAccessPeriod(String accessPeriod) throws ParseException {
 
         LocalDateTime getTodayDate = LocalDateTime.now();

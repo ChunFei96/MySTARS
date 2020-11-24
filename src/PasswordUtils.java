@@ -8,13 +8,24 @@ import java.util.Random;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+/**
+ * PasswordUtils - util class that manages password related issue.
+ * For example:
+ * <p>
+ *     hashing the password, verify user enter password, generate random password for new created account
+ * </p>
+ */
 public class PasswordUtils {
-
     private static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int ITERATIONS = 10000;
     private static final int KEY_LENGTH = 256;
 
+    /**
+     * Usage: create the salt
+     * @param length indicate the length of the salt that wants to be generated
+     * @return salt string
+     */
     public static String getSalt(int length) {
         StringBuilder returnValue = new StringBuilder(length);
 
@@ -25,6 +36,12 @@ public class PasswordUtils {
         return new String(returnValue);
     }
 
+    /**
+     * Usage: function that use to hash the password
+     * @param password password
+     * @param salt salt
+     * @return the hashed password
+     */
     public static byte[] hash(char[] password, byte[] salt) {
         PBEKeySpec spec = new PBEKeySpec(password, salt, ITERATIONS, KEY_LENGTH);
         Arrays.fill(password, Character.MIN_VALUE);
@@ -38,6 +55,12 @@ public class PasswordUtils {
         }
     }
 
+    /**
+     * Usage: create a more secure password that being hashed with salt
+     * @param password the password that user has entered
+     * @param salt an unique string that use for generating secure password
+     * @return the password that has being hashed
+     */
     public static String generateSecurePassword(String password, String salt) {
         String returnValue = null;
 
@@ -48,18 +71,30 @@ public class PasswordUtils {
         return returnValue;
     }
 
+    /**
+     * Usage: use to verify user entered password with the password in the database
+     * @param providedPassword the password that user entered during login
+     * @param securedPassword the hashed password that stored in UserTable.
+     * @param salt some string that needs to be used when generating the password, as well as during password validation
+     * @return the status of user password is valid or invalid
+     */
     public static boolean verifyUserPassword(String providedPassword, String securedPassword, String salt){
         boolean returnValue = false;
 
-        // Generate New secure password with the same salt
+        /* Generate New secure password with the same salt*/
         String newSecurePassword = generateSecurePassword(providedPassword, salt);
 
-        // Check if two passwords are equal
+        /* Check if two passwords are equal*/
         returnValue = newSecurePassword.equalsIgnoreCase(securedPassword);
 
         return returnValue;
     }
 
+    /**
+      * Usage: generate a random password using 4 combination of inputs: UpperCase,LowerCase,special characters and numbers.
+      * @param length indicate the size of the auto generated password
+     * @return auto-generated password
+     */
     public static char[] generatePassword(int length) {
         String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
