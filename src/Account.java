@@ -56,7 +56,7 @@ public class Account {
     /**
      * Usage: Create new User account and save it into /UserTable/user.txt
      * <p> </p>
-     * required inputs: <username>,<password>,<salt>,<securePassword>,<role>,
+     * required inputs: username,password,salt,securePassword,role
      */
     public void addAccount(){
 

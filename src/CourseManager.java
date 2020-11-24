@@ -275,12 +275,11 @@ public class CourseManager{
 
     /**
      * Usage: Allow admin to change student's access period, and update to the database.
-     * <p> </p>
-     * Inputs:
+     * <p> Inputs:</p>
      * <p> a. Student Matrix No</p>
      * <p> b. New access period</p>
      *
-     * @throws Exception
+     * @throws Exception invalid date
      */
     public void EditStudentAccessPeriod() throws Exception {
         //TODO: Beautify Print
@@ -416,7 +415,9 @@ public class CourseManager{
     }
 
     /**
-     * Usage:
+     * Usage: Allow admin to add course into database.
+     * <p> </p>
+     * Duplication check on same entry for course is not allow.
      */
     public void AddCourse()
     {
@@ -469,12 +470,13 @@ public class CourseManager{
             IOUtills.setContent(changedDataClass);
             IOUtills.WriteFile();
 
-            System.out.println("A new course has added into database successfully.");
+            String print = "A new course has added into database successfully.";
+            System.out.println(print);
         }
     }
 
     /**
-     * Usage:
+     * Usage: allow a
      */
     public void UpdateCourse(){
         Scanner myObj = new Scanner(System.in);
@@ -688,7 +690,7 @@ public class CourseManager{
     }
 
     /**
-     * Usage:
+     * Usage: Report display student list, filter by class index
      */
     public void PrintStudentListByIndex(){
         Scanner myObj = new Scanner(System.in);
@@ -758,7 +760,7 @@ public class CourseManager{
     }
 
     /**
-     * Usage:
+     * Usage: Report display student list, filter by course index
      */
     public void PrintStudentListByCourse(){
         Scanner myObj = new Scanner(System.in);
@@ -830,7 +832,8 @@ public class CourseManager{
     }
 
     /**
-     * Usage:
+     * Usage: Check Course Vacancy
+     * @return available course vacancy
      */
     public int CheckCourseVacancy(){
         int counter = 0;

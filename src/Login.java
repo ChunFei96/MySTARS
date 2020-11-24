@@ -150,8 +150,9 @@ public class Login {
      *
      * @param accessPeriod user's accessPeriod from UserTable
      * @return status to represent the user is good to login (login within the access period)
-     * @throws ParseException
+     * @throws ParseException invalid date
      */
+
     public static boolean checkAccessPeriod(String accessPeriod) throws ParseException {
 
         LocalDateTime getTodayDate = LocalDateTime.now();
