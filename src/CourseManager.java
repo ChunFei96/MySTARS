@@ -500,12 +500,14 @@ public class CourseManager{
                 matricNo,getTodayDate,accessPeriodEnd);
 
         boolean duplicateStudent = newStudent.checkDuplicateStudent(newStudent);
-
         if(duplicateStudent){
             System.out.println("Error! The student cannot be added as it already existed in the system!");
+            MailHelper.setMessage("error");
         }
         else{
             String formatStudent = newStudent.ToStr();
+
+            Singleton_StudentProfile.getInstance().studentProfileDB.add(newStudent);
 
             //Update Table 1
             UpdateDB("StudentProfile","txt",formatStudent,"StudentProfile",true);
@@ -597,14 +599,17 @@ public class CourseManager{
             System.out.println((counter + 1) + ". " + Course.getCode() + " " + Course.getName());
             counter++;
         }
+        System.out.println((CourseInfo.size() + 1) + ". Back");
 
         int choice = 0;
         do{
-
             System.out.println("Select an option for update: ");
             choice = myObj.nextInt();
 
-            if(!(choice > 0 && choice <= CourseInfo.size())){
+            if(choice == (CourseInfo.size() + 1)){
+                valid = true;
+            }
+            else if(!(choice > 0 && choice <= CourseInfo.size())){
                 System.out.println("Please enter a valid option!");
             }
             else{
@@ -613,112 +618,150 @@ public class CourseManager{
 
         }while(!valid);
 
-        CourseInfo selectedCourse = CourseInfo.get((choice-1));
-        String unchangedData = selectedCourse.getAllRecordInDB(selectedCourse.getCode());
-        selectedCourse.printCourseInfo();
+        if(!(choice == (CourseInfo.size() + 1))){
+            CourseInfo selectedCourse = CourseInfo.get((choice-1));
+            String unchangedData = selectedCourse.getAllRecordInDB(selectedCourse.getCode());
+            selectedCourse.printCourseInfo();
 
-        myObj.nextLine();
-        String [] editOptions = new String[] {"code","name","type","class's vacancy"};
-        selectedCourse.EditCourseInfoOptions(editOptions);
-        choice = myObj.nextInt();
+            myObj.nextLine();
+            String [] editOptions = new String[] {"code","name","type","class's vacancy"};
+            selectedCourse.EditCourseInfoOptions(editOptions);
+            choice = myObj.nextInt();
 
-        boolean terminateEditAction = false;
+            boolean terminateEditAction = false;
+            boolean isBack = false;
+            int editTracker = 0;
 
-        do{
-            switch(choice){
-                case 1:
-                    System.out.println("Enter new Course Code: ");
-                    myObj.nextLine();
-                    String CourseCode_N = myObj.nextLine();
-                    selectedCourse.setCode(CourseCode_N);
-                    break;
-                case 2:
-                    System.out.println("Enter new Course name: ");
-                    myObj.nextLine();
-                    String CourseName_N = myObj.nextLine();
-                    selectedCourse.setName(CourseName_N);
-                    break;
-                case 3:
-                    System.out.println("Enter new Course type: ");
-                    myObj.nextLine();
-                    String CourseType_N = myObj.nextLine();
-                    selectedCourse.setType(CourseType_N);
-                    break;
-                case 4:
-                    if(selectedCourse.getClassList().size() > 0){
-                        String leftAlign = "| %-11s | %-7s |%-9s | %-12s | %-10s | %-14s | %-8s |%-14s |%n";
-                        System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
-                        System.out.format("| Class Index |  Group  |    Day   |    Period    |    Venue   |     Remark     |  Vacancy | Waiting list  |%n");
-                        System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
+            do{
+                switch(choice){
+                    case 1:
+                        System.out.println("Enter new Course Code: ");
+                        myObj.nextLine();
+                        String CourseCode_N = myObj.nextLine();
+                        selectedCourse.setCode(CourseCode_N);
+                        break;
+                    case 2:
+                        System.out.println("Enter new Course name: ");
+                        myObj.nextLine();
+                        String CourseName_N = myObj.nextLine();
+                        selectedCourse.setName(CourseName_N);
+                        break;
+                    case 3:
+                        System.out.println("Enter new Course type: ");
+                        myObj.nextLine();
+                        String CourseType_N = myObj.nextLine();
+                        selectedCourse.setType(CourseType_N);
+                        break;
+                    case 4:
+                        if(selectedCourse.getClassList().size() > 0){
+                            String leftAlign = "| %-11s | %-7s |%-9s | %-12s | %-10s | %-14s | %-8s |%-14s |%n";
+                            System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
+                            System.out.format("| Class Index |  Group  |    Day   |    Period    |    Venue   |     Remark     |  Vacancy | Waiting list  |%n");
+                            System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
 
-                        int c = 0;
-                        for(var classInfo : selectedCourse.getClassList()){
-                            selectedCourse.getClassList().get(c).printClassInfo(leftAlign,c);
-                            c++;
-                        }
-                        System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
-                        System.out.println("1. Edit vacancy by class index: ");
-                        System.out.println("2. Back ");
-
-                        int classInput = myObj.nextInt();
-                        if(classInput == 1){
-                            myObj.nextLine();
-                            System.out.println("Enter class index to edit vacancy: ");
-                            String getClassIndex = myObj.nextLine();
-
-                            ClassInfo getClassInfo = selectedCourse.getClassList().stream().filter(x -> x.getIndexNo().equals(getClassIndex)).collect(Collectors.toList()).get(0);
-
-                            System.out.println("Enter new vacancy: ");
-                            int newVacancy = myObj.nextInt();
-                            getClassInfo.setVacancy(newVacancy);
-
-                            String changedRow = getClassInfo.getIndexNo();  //Use to determine which Row in DB is changed
-
-                            String unchangeData = "";
-                            for(var n : selectedCourse.getClassList()){
-                                if(!(n.getIndexNo().equals(changedRow))){
-                                    String [] d = new String[]{n.getIndexNo(),n.getCourseCodeReference(),n.getGroupNo().toString(),n.getDay(),
-                                            n.getTime(),n.getVenue(),n.getRemark(),n.getVacancy().toString(),n.getQueue().toString()};
-                                    unchangeData += String.join(",",d) + "\r\n";
-                                }
+                            int c = 0;
+                            for(var classInfo : selectedCourse.getClassList()){
+                                selectedCourse.getClassList().get(c).printClassInfo(leftAlign,c);
+                                c++;
                             }
+                            System.out.format("+-------------+---------+----------+--------------+------------+----------------+----------+---------------+%n");
+                            System.out.println("1. Edit vacancy by class index: ");
+                            System.out.println("2. Back ");
 
-                            String [] changedD = new String[]{getClassInfo.getIndexNo(),getClassInfo.getCourseCodeReference(),getClassInfo.getGroupNo().toString(),getClassInfo.getDay(),
-                                    getClassInfo.getTime(),getClassInfo.getVenue(),getClassInfo.getRemark(),getClassInfo.getVacancy().toString(),getClassInfo.getQueue().toString()};
-                            unchangeData += String.join(",",changedD);  //Merge the Changed Row into Unchanged Rows to save back into DB
+                            int classInput = myObj.nextInt();
+                            if(classInput == 1){
+                                myObj.nextLine();
+                                System.out.println("Enter class index to edit vacancy: ");
+                                String getClassIndex = myObj.nextLine();
 
-                            UpdateDB(getClassInfo.getCourseCodeReference() + "_Class","txt",unchangeData,"ClassTable",false);
+                                ClassInfo getClassInfo = selectedCourse.getClassList().stream().filter(x -> x.getIndexNo().equals(getClassIndex)).collect(Collectors.toList()).get(0);
+
+                                System.out.println("Enter new vacancy: ");
+                                int newVacancy = myObj.nextInt();
+                                getClassInfo.setVacancy(newVacancy);
+
+                                String changedRow = getClassInfo.getIndexNo();  //Use to determine which Row in DB is changed
+
+                                String unchangeData = "";
+                                for(var n : selectedCourse.getClassList()){
+                                    if(!(n.getIndexNo().equals(changedRow))){
+                                        String [] d = new String[]{n.getIndexNo(),n.getCourseCodeReference(),n.getGroupNo().toString(),n.getDay(),
+                                                n.getTime(),n.getVenue(),n.getRemark(),n.getVacancy().toString(),n.getQueue().toString()};
+                                        unchangeData += String.join(",",d) + "\r\n";
+                                    }
+                                }
+
+                                String [] changedD = new String[]{getClassInfo.getIndexNo(),getClassInfo.getCourseCodeReference(),getClassInfo.getGroupNo().toString(),getClassInfo.getDay(),
+                                        getClassInfo.getTime(),getClassInfo.getVenue(),getClassInfo.getRemark(),getClassInfo.getVacancy().toString(),getClassInfo.getQueue().toString()};
+                                unchangeData += String.join(",",changedD);  //Merge the Changed Row into Unchanged Rows to save back into DB
+
+                                UpdateDB(getClassInfo.getCourseCodeReference() + "_Class","txt",unchangeData,"ClassTable",false);
+                            }
+                            else if(classInput == 2){
+                                break;
+                            }
                         }
-                        else if(classInput == 2){
-                            break;
+                        else{
+                            System.out.println("Sorry, no Class Info available.");
                         }
+                        break;
+                    default:
+                        terminateEditAction = true;
+                        isBack = true;
+                        break;
+                }
+
+                if(choice >= 1 && choice <= 4){
+                    System.out.println("Do you want to continue editing? (Y/N)");
+                    String decision = myObj.nextLine();
+                    if(decision.toUpperCase().equals("N")){
+                        terminateEditAction = true;
                     }
                     else{
-                        System.out.println("Sorry, no Class Info available.");
+                        selectedCourse.EditCourseInfoOptions(editOptions);
+                        choice = myObj.nextInt();
                     }
-                    break;
-            }
+                    editTracker++;
+                }
+            }while(!terminateEditAction);
 
-            System.out.println("Do you want to continue editing? (Y/N)");
-            String decision = myObj.nextLine();
-            if(decision.toUpperCase().equals("N")){
-                terminateEditAction = true;
+            if(!isBack && editTracker == 0){
+                var changedData = selectedCourse.getRecordInDB(selectedCourse);
+                unchangedData += "\r\n" + changedData;
+
+                UpdateDB("CourseInfo","txt",unchangedData.trim(),"CourseTable",false);
+
+                String msg = "You have successfully updated the course " + selectedCourse.getName() + ".";
+                System.out.println(msg);
+                System.out.println("Email notification sent!");
+                MailHelper.setMessage(msg);
+            }
+            else if(editTracker > 0){
+                System.out.println("Do you want save your changes? (Y/N)");
+                myObj.nextLine();
+                String decision = myObj.nextLine();
+                if(decision.toUpperCase().equals("Y")){
+                    var changedData = selectedCourse.getRecordInDB(selectedCourse);
+                    unchangedData += "\r\n" + changedData;
+
+                    UpdateDB("CourseInfo","txt",unchangedData.trim(),"CourseTable",false);
+
+                    String msg = "You have successfully updated the course " + selectedCourse.getName() + ".";
+                    System.out.println(msg);
+                    System.out.println("Email notification sent!");
+                    MailHelper.setMessage(msg);
+                }
+                else{
+                    MailHelper.setMessage("error");
+                }
             }
             else{
-                selectedCourse.EditCourseInfoOptions(editOptions);
-                choice = myObj.nextInt();
+                MailHelper.setMessage("error");
             }
-        }while(!terminateEditAction);
-
-        var changedData = selectedCourse.getRecordInDB(selectedCourse);
-        unchangedData += "\r\n" + changedData;
-
-        UpdateDB("CourseInfo","txt",unchangedData.trim(),"CourseTable",false);
-
-        String msg = "You have successfully updated the course " + selectedCourse.getName() + ".";
-        System.out.println(msg);
-        System.out.println("Email notification sent!");
-        MailHelper.setMessage(msg);
+        }
+        else{
+            MailHelper.setMessage("error");
+        }
     }
 
     /**
@@ -866,6 +909,9 @@ public class CourseManager{
                 }
             }while(!valid);
         }
+        else if(_StudentProfile.size() == 0){
+            System.out.println("There are no student in this class.");
+        }
         else{
             System.out.println("Index No not found, please try again!");
         }
@@ -938,6 +984,9 @@ public class CourseManager{
                 }
             }while(!valid);
         }
+        else if(_StudentProfile.size() == 0){
+            System.out.println("There are no student in this class.");
+        }
         else{
             System.out.println("Course Code not found, please try again!");
         }
@@ -988,6 +1037,9 @@ public class CourseManager{
                         System.out.println("There are " + (20-selectedClassIndex.getVacancy())  + " of 20 vacancies available.");
 
                         isClassValid = true;
+                    }
+                    else{
+                        System.out.println("Please enter a valid Class Index");
                     }
                 }while(!isClassValid);
 

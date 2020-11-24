@@ -21,7 +21,7 @@ public abstract class EnumHelper {
     /**
      * List of Status
      */
-    public static enum Status{ ACTIVE, DEACTIVED }
+    public static enum Status{ ACTIVE, DEACTIVATED }
 
     /**
      * List of Course Type

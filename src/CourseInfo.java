@@ -142,6 +142,7 @@ public class CourseInfo
         for(int k = 0; k < editOptions.length;k++){
             System.out.println((k+1) + ". Edit " +  editOptions[k]);
         }
+        System.out.println("5. Back");
         System.out.println("============");
         System.out.println("Enter your input: ");
     }

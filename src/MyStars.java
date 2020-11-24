@@ -304,7 +304,10 @@ public class MyStars {
                     MailHelper.setEmailSubject("Add Student Notifcation");
                     admin.AddStudent();    //Update DONE
                     mailHelper = new MailHelper();
-                    mailHelper.SendEmail();
+
+                    if(!(MailHelper.getMessage().equals("error"))){
+                        mailHelper.SendEmail();
+                    }
                     break;
                 case 2:
                     MailHelper.setEmailSubject("Add Course Notifcation");
@@ -316,7 +319,10 @@ public class MyStars {
                     MailHelper.setEmailSubject("Update Course Notifcation");
                     admin.UpdateCourse();  //Update DONE
                     mailHelper = new MailHelper();
-                    mailHelper.SendEmail();
+
+                    if(!(MailHelper.getMessage().equals("error"))){
+                        mailHelper.SendEmail();
+                    }
                     break;
                 case 4:
                     admin.EditStudentAccessPeriod(); //Update DONE
