@@ -1,7 +1,7 @@
 
 /**
  * Class's attributes and functions
- * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @author Lee Chun Fei and Mindy Hwang Mei Hui
  * @version 1.0
  * @since 2020-11-13
  */

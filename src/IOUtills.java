@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 /**
  * Handle all the read and write to txt file action
- * @author Tan Wen Jun & Mo Naiming
+ * @author Tan Wen Jun and Mo Naiming
  * @version 1.0
  * @since 2020-11-10
  */
@@ -173,7 +173,7 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
-                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
+                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" +  getDirectoryName() + File.separator + _filepath ;
                 //_filepath = getDirectoryName() + File.separator + _filepath ;
             }
 
@@ -197,7 +197,7 @@ public class IOUtills {
             String _filepath = getFilename()  + "." + getFiletype();
 
             if(!getDirectoryName().isEmpty()){
-                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" + getDirectoryName() + File.separator + _filepath ;
+                _filepath = "C:\\Users\\USER\\Documents\\MySTARS\\" +  getDirectoryName() + File.separator + _filepath ;
                 //_filepath = getDirectoryName() + File.separator + _filepath ;
             }
 

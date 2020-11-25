@@ -1,7 +1,7 @@
 
 /**
  * Admin interface extends user interface for common function and to be implemented by Admin concrete class
- * @author Tan Wen Jun & Mo Naiming
+ * @author Tan Wen Jun and Mo Naiming
  * @version 1.0
  * @since 2020-11-10
  */

@@ -146,7 +146,11 @@ public class MyStars {
                         }
                     }
                     if(!isClash1)
+                    {
                         student.AddCourse(selectedCourse,false);
+                        System.out.println("You have successfully registered " + selectedCourse.getCode() + " " + selectedCourse.getClassList().get(0).getIndexNo() + " !");
+                    }
+
                     break;
                 case 2:
                     StudentCourseMenu(student.getCourseInfoList(), student.getName());
@@ -154,7 +158,9 @@ public class MyStars {
                     if(dropSelection == student.getCourseInfoList().size()+1)
                         break;
 
+                    System.out.println("You have successfully dropped " + student.getCourseInfoList().get(dropSelection-1).getCode() + " " + student.getCourseInfoList().get(dropSelection-1).getClassList().get(0).getIndexNo() + " !");
                     student.DropCourse(student.getCourseInfoList().get(dropSelection-1),false);
+
                     break;
                 case 3:
                     student.RegisteredCourses();

@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  * Handle all the account action for user
- * @author Tan Wen Jun & Mo Naiming
+ * @author Tan Wen Jun and Mo Naiming
  * @version 1.0
  * @since 2020-11-10
  */
@@ -209,6 +209,7 @@ public class Login {
                 user.setUserRole(currentUser.getMyRole());
                 return true;
             } else {
+                System.out.println("Username/Password is invalid! Please try again");
                 return false;
             }
         }

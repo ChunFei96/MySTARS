@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Control Class
  * Student and Admin class use this course system to perform all the functionality
- * @author Lee Chun Fei & Tan Wen Jun
+ * @author Lee Chun Fei and Tan Wen Jun
  * @version 1.0
  * @since 2020-11-16
  */
@@ -896,7 +896,7 @@ public class CourseManager{
                     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                     String strDate = formatter.format(currentTime);
                     IOUtills.setFilename("StudentList_" + indexNo + "_" + strDate);
-                    IOUtills.setDirectoryName("C:/Users/USER/Documents/MySTARS");
+                    //IOUtills.setDirectoryName("C:/Users/USER/Documents/MySTARS");
                     IOUtills.setFiletype("txt");
                     IOUtills.setContent(String.join("\r\n",output));
                     IOUtills.WriteFile();
@@ -971,7 +971,7 @@ public class CourseManager{
                     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                     String strDate = formatter.format(currentTime);
                     IOUtills.setFilename("StudentList_" + _StudentProfile.get(0).getCourseCode() + "_" + strDate);
-                    IOUtills.setDirectoryName("C:\\Users\\USER\\Documents\\MySTARS");
+                    //IOUtills.setDirectoryName("C:\\Users\\USER\\Documents\\MySTARS");
                     IOUtills.setFiletype("txt");
                     IOUtills.setContent(String.join("\r\n",output));
                     IOUtills.WriteFile();
@@ -1034,7 +1034,7 @@ public class CourseManager{
 
                     if(classOption > 0 && classOption <= selectedCourse.getClassList().size()){
                         var selectedClassIndex = selectedCourse.getClassList().get(classOption-1);
-                        System.out.println("There are " + (20-selectedClassIndex.getVacancy())  + " of 20 vacancies available.");
+                        System.out.println("There are " + (selectedClassIndex.getVacancy())  + " of 20 vacancies available.");
 
                         isClassValid = true;
                     }

@@ -14,7 +14,7 @@ import java.util.Random;
  * <p>
  *     hashing the password, verify user enter password, generate random password for new created account
  * </p>
- * @author Tan Wen Jun & Mo Naiming
+ * @author Tan Wen Jun and Mo Naiming
  * @version 1.0
  * @since 2020-11-10
  */

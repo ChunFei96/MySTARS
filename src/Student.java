@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 
 /**
  * Student concrete class that implements student interface for mandatory function and extends User class for common attributes
- * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @author Lee Chun Fei and Mindy Hwang Mei Hui
  * @version 1.0
  * @since 2020-11-15
  */
@@ -243,7 +243,7 @@ public class Student extends User implements IStudent{
     public boolean checkDuplicateStudent(Student newStudent){
         boolean output = true;
         var students = Singleton_StudentProfile.getInstance().studentProfileDB;
-        var getClassInfo = students.stream().filter(x -> x.getMatricNo().equals(newStudent.getMatricNo()) && x.getEmail().equals(newStudent.getEmail())).collect(Collectors.toList());  // && x.getUsername().equals(newStudent.getUsername()
+        var getClassInfo = students.stream().filter(x -> x.getMatricNo().equals(newStudent.getMatricNo()) || x.getEmail().equals(newStudent.getEmail())).collect(Collectors.toList());  // && x.getUsername().equals(newStudent.getUsername()
 
         if(getClassInfo.size() == 0){
             output = false;

@@ -1,7 +1,7 @@
 
 /**
  * Entity Class of User
- * @author Lee Chun Fei & Tan Wen Jun
+ * @author Lee Chun Fei and Tan Wen Jun
  * @version 1.0
  * @since 2020-11-16
  */

@@ -1,6 +1,6 @@
 /**
  * Student interface extends user interface for common function and to be implemented by Student concrete class
- * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @author Lee Chun Fei and Mindy Hwang Mei Hui
  * @version 1.0
  * @since 2020-11-10
  */

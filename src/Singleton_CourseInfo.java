@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 /**
  * Singleton for CourseInfo database
- * @author Lee Chun Fei & Mindy Hwang Mei Hui
+ * @author Lee Chun Fei and Mindy Hwang Mei Hui
  * @version 1.0
  * @since 2020-11-15
  */

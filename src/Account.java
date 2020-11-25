@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 /**
  * Handle all the account action for user
- * @author Tan Wen Jun & Mo Naiming
+ * @author Tan Wen Jun and Mo Naiming
  * @version 1.0
  * @since 2020-11-10
  */

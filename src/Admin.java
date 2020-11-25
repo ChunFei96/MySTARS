@@ -1,7 +1,7 @@
 
 /**
  * Admin concrete class that implements admin interface for mandatory function and extends User class for common attributes
- * @author Tan Wen Jun & Mo Naiming
+ * @author Tan Wen Jun and Mo Naiming
  * @version 1.0
  * @since 2020-11-10
  */
