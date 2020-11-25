@@ -20,11 +20,6 @@ public class MyStars {
     public static void main(String[] args) throws Exception {
 
         mailHelper = new MailHelper();
-        //Create new user: <<user_2>>
-//        Account user_2 = new Account("chunfei","abc123");
-//        user_2.setUserRole(EnumHelper.UserRole.STUDENT);
-//        user_2.addAccount();
-
         //Test Student Acc
         //String username = "chunfei";
         //String password = "abc123";
@@ -47,9 +42,6 @@ public class MyStars {
 
         String username = console.readLine("Enter your username: ");
         char[] password = console.readPassword("Enter your password: ");
-        //console.printf("Password entered was: %s%n", new String(passwordArray));
-
-
 
         // Init all db
         InitCourseDB();

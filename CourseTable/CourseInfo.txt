@@ -7,3 +7,6 @@ CZ2004,HCI,Core
 CZ2002,Object Oriented Design & Programming,Core
 CZ3012,Test,Core
 CZ1105,Digital logic,CoreCZ5012,Test coruse,Core
+CZ9230,Test course demo,Core
+CZ9910,Demo couse,Core
+CX1033,Test case Course,Core
